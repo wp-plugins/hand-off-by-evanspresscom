@@ -1,0 +1,104 @@
+#wpHandoff-admin-bar { background: #222222; position: fixed; left: 0; z-index: 999999; max-height: 100%; overflow: auto; top: 0; width: 100%; user-select: none; -moz-user-select: none; -webkit-user-select: none; }
+#wpHandoff-admin-bar hr { border: 1px solid #fff; margin: 5px 0; }
+.wpHandoff-admin-bar-menu { position: relative; text-align: justify; }
+.wpHandoff-admin-bar-menu > div:first-child > ul { margin: 0; vertical-align: top; }
+.wpHandoff-admin-bar-menu > div:first-child > ul li { list-style: none; margin: 0; }
+.wpHandoff-admin-bar-action { float: right; padding: 10px 20px 0 0; position: absolute; right: 0; text-align: right; top: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
+.wpHandoff-admin-bar-action > a,
+.wpHandoff-admin-bar-action > a:focus,
+.wpHandoff-admin-bar-action > a:hover,
+.wpHandoff-admin-bar-action input { background: #00a0d2; border: 0; color: #fff; cursor: pointer; display: block; font: 400 13px/13px "Open Sans",sans-serif; margin: 0 0 5px 0; padding: 5px 10px; text-align: center; text-decoration: none; vertical-align: top; width: 100%; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
+.wpHandoff-admin-bar-action form { margin: 0; }
+.wpHandoff-admin-bar-menu .update-plugins,
+.wpHandoff-admin-bar-menu .awaiting-mod { font: 600 9px/17px "Open Sans",sans-serif; display: inline-block; background: #d54e21; color: #fff; margin: 1px 0 0 2px; vertical-align: top; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; }
+.wpHandoff-admin-bar-menu .update-plugins span,
+.wpHandoff-admin-bar-menu .awaiting-mod span { display: block; font: inherit; padding: 0 6px; }
+.wpHandoff-admin-bar-menu-item { display: inline-block; min-width: 9%; margin: 0 5px; padding: 0; position: relative; text-align: left; vertical-align: top; }
+.wpHandoff-admin-bar-menu-item > a,
+.wpHandoff-admin-bar-menu-item > a:focus,
+.wpHandoff-admin-bar-menu-item > a:hover { color: #ffffff; display: block; font: 600 14px/18px "Open Sans", sans-serif; max-width: 200px; overflow: hidden; padding: 8px 10px; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.wpHandoff-admin-bar-menu-item > a:hover { background: #0074a2; }
+.wpHandoff-admin-bar-pages .wpHandoff-admin-bar-menu-item > a:hover { background: #78AB46; }
+.wpHandoff-admin-bar-menu-item.active { background: #333333; }
+.wpHandoff-admin-bar-menu-item.active > a { background: #0074a2; }
+.wpHandoff-admin-bar-submenu { margin: 0; }
+.wpHandoff-admin-bar-menu-item,
+.wpHandoff-admin-bar-submenu-item { float: none; }
+.wpHandoff-admin-bar-submenu-item > a,
+.wpHandoff-admin-bar-submenu-item > a:focus,
+.wpHandoff-admin-bar-submenu-item > a:hover{ background: #222222; color: #bbbbbb; display: block; font: 400 13px/11px "Open Sans", sans-serif; padding: 8px 0 8px 20px; text-decoration: none; white-space: nowrap; }
+.wpHandoff-admin-bar-submenu-item > a:hover { background: #333333; color: #ffffff; }
+.wpHandoff-admin-bar-submenu-item > a.active{ color: #ffffff; font-weight: bold; }
+.wpHandoff-admin-bar-show { border-bottom: 5px solid #00a0d2;clear: both; color: #fff; cursor: pointer; height: 27px; line-height: 18px; text-align: center; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; -ms-box-sizing: content-box; }
+.wpHandoff-admin-bar-show span { font: 300 13px/27px "Open Sans", sans-serif; }
+
+@media screen and (max-width: 783px) {
+    .wpHandoff-admin-bar-show { height: 46px; }
+    .wpHandoff-admin-bar-show span { line-height: 46px; }
+}
+
+.wpHandoff-welcome-panel-content { display: block !important; padding-bottom: 23px; } /* override inline style from welcome panel */
+
+.wpHandoff-feed-link { display: block; }
+.wpHandoff-feed-title,
+.wpHandoff-feed-date { display: inline-block; max-width: 39%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: top; }
+.wpHandoff-feed-date { float: right; }
+.wpHandoff-feed-content { clear: both; overflow: hidden; text-overflow: ellipsis; }
+
+.wpHandoff-settings { clear: both; padding: 10px 0 0 0; width: 99%; }
+.wpHandoff-settings .wpHandoff-tabs { float: left; overflow: hidden; position: relative; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; -ms-box-sizing: border-box; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap { height: 100%; overflow: hidden; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap .wpHandoff-tabs-wrapper { display: inline-block; height: 100%; overflow: hidden; position: relative; left: 0; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap .wpHandoff-tabs-wrapper .title { background: #222222; border: 1px solid #000; border-bottom-width: 0px; border-right-width: 0px; color: #fff; cursor: pointer; height: 30px; line-height: 30px; white-space: nowrap; width: 88px; overflow: hidden; padding: 5px 5px 5px 10px; position: relative; text-decoration: none; text-overflow: ellipsis; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap .wpHandoff-tabs-wrapper .title:first-child { -webkit-border-top-left-radius: 5px; -moz-border-radius-topleft: 5px; border-top-left-radius: 5px; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap .wpHandoff-tabs-wrapper .title:last-child { border-bottom-width: 1px; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; border-bottom-left-radius: 5px; }
+.wpHandoff-settings .wpHandoff-tabs .wpHandoff-tabs-wrap .wpHandoff-tabs-wrapper .title.selected { background: #0074a2; cursor: default; z-index: 2; }
+.wpHandoff-settings .wpHandoff-tabs.overflow { padding: 20px 0; }
+.wpHandoff-settings .wpHandoff-tabs.overflow .wpHandoff-tabs-wrap { width: 100%; }
+.wpHandoff-settings .wpHandoff-content { background: #fff; border: 1px solid #000; display: block; overflow: hidden; position: relative; left: -1px; text-align: justify; -webkit-border-top-right-radius: 5px; -webkit-border-bottom-right-radius: 5px; -moz-border-radius-topright: 5px; -moz-border-radius-bottomright: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+.wpHandoff-settings .wpHandoff-content > div { margin: 0 auto; padding: 10px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; -ms-box-sizing: border-box; }
+.wpHandoff-settings .wpHandoff-content .wpHandoff-hint { overflow: hidden; position: relative; }
+.wpHandoff-settings .wpHandoff-content .wpHandoff-hint p { font: 400 14px/20px "Open Sans", sans-serif; margin: 10px 100px 0 0; position: relative; text-align: justify; }
+.wpHandoff-settings .wpHandoff-content .wpHandoff-hint > a { cursor: pointer; padding: 10px 15px 0 3px; position: absolute; right: 10px; top: 5px; text-decoration: none; }
+.wpHandoff-settings .wpHandoff-content .wpHandoff-hint > a:before { background: 0 0; color: #b4b9be; content: '\f153'; font: 400 16px/1 dashicons; speak: none; height: 20px; text-align: center; width: 20px; position: absolute; left: -18px; margin-top: 2px; }
+
+.wpHandoff-menu-wrap { max-width: 800px; text-align: left; }
+.wpHandoff-menu-show,
+.wpHandoff-menu-hidden { border: 1px solid rgba(0, 0, 0, 0.6); display: inline-block; padding: 10px; vertical-align: top; width: 49%; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
+.wpHandoff-menu-show { border: 0; }
+.wpHandoff-menu-hidden { margin-top: 50px; }
+.wpHandoff-menu-list { margin: 0; padding: 10px 0 0 0; min-height: 70px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item { border: 1px solid #000; cursor: pointer; margin: 3px; max-width: 300px; vertical-align: top; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item.selected { border-style: dashed; color: #fff; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name { padding: 10px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffmenu_rename'],
+.wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffmenu_rename']:focus,
+.wpHandoff-submenu-list li.wpHandoff-submenu-item input[name^='wpHandoffsubmenu_rename'],
+.wpHandoff-submenu-list li.wpHandoff-submenu-item input[name^='wpHandoffsubmenu_rename']:focus,
+.wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffpages_rename'],
+.wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffpages_rename']:focus { background: transparent; border: 0; font-size: 13px; margin: 0; outline: 0; padding: 0; width: 100%; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; -o-box-shadow: none; }
+
+.wpHandoff-submenu-arrow { padding: 0 5px 5px 5px; text-align: center; }
+.wpHandoff-submenu-list { padding: 5px 10px; }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item {  }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item .wpHandoff-submenu-html,
+.wpHandoff-submenu-list li.wpHandoff-submenu-item input[type='text'] { display: inline-block; vertical-align: top; }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item .wpHandoff-submenu-html.hide,
+.wpHandoff-submenu-list li.wpHandoff-submenu-item input[type='text'].hide { display: none; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-submenu-list li.wpHandoff-submenu-item input[type='text'] { width: auto; }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item-parent { color: #ff0000; }
+
+.wpHandoff-block { display: inline-block; min-width: 33%; max-width: 99%; text-align: left; vertical-align: top; }
+.wpHandoff-block .wpHandoff-block-title { background: #333333; color: #fff; font-weight: bold; padding: 5px; }
+.wpHandoff-block .wpHandoff-block-content { border: 1px solid #333333; padding: 10px; }
+
+.wpHandoff-login-image-preview { margin: 0 auto; padding: 10px 0; text-align: center; }
+.wpHandoff-login-image-preview img { max-width: 320px; max-height: 250px; }
+.wpHandoff-login-image-upload { position: relative; }
+.wpHandoff-login-image-error { background: #dd0000; color: #fff; margin: 5px 0; padding: 10px; }
+.wpHandoff-login-image-progress { border: 1px solid #333333; font-size: 14px; line-height: 30px; text-align: center; border-radius: 30px; -moz-border-radius: 30px; -webkit-border-radius: 30px; }
+.wpHandoff-login-image-progress > div:last-child { background: #0074a2; color: #fff; font-weight: bold; border-radius: 30px; -moz-border-radius: 30px; -webkit-border-radius: 30px; }
+.wpHandoff-login-image-file { cursor: pointer; padding: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; filter: alpha(opacity=0); }
+
+#wpHandoff-admin-bar .hide,
+.wpHandoff-settings .hide { display: none; }
