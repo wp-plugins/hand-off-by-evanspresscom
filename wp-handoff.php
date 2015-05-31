@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 0.1.0.0
+    Version: 1.0.0.0
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -120,9 +120,9 @@ class wpHandoff extends wpHandoffPlugin {
                  * media gallery options
                  * will sync after saving settings
                 */
-                'image_default_link_type'   =>  'file',
-                'image_default_size'        =>  '',
-                'image_default_align'       =>  '',
+                'image_default_link_type'   =>  'none',
+                'image_default_size'        =>  'medium',
+                'image_default_align'       =>  'right',
             ),
         );
 
@@ -134,20 +134,20 @@ class wpHandoff extends wpHandoffPlugin {
             'welcome_panel' =>  false,
             'admin_bar_menu'=>  array(
                 'admin_bar_menu'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 ),
             ),
             'admin_menu'    =>  array(
                 'rename_plugin_menu'            =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 ),
                 'remove_menus'  =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 ),
             ),
             'do_meta_boxes' =>  array(
                 'remove_widgets'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'wp_dashboard_setup'    =>  'setup_widgets',
@@ -168,27 +168,27 @@ class wpHandoff extends wpHandoffPlugin {
             'contextual_help'   =>  'remove_help',
             'page_row_actions'  =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'post_row_actions'  =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'tag_row_actions'   =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'manage_posts_columns'  =>  array(
                 'remove_columns'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'manage_pages_columns'  =>  array(
                 'remove_columns'    =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'plugin_action_links_' . $this -> name => 'plugin_action_links',
@@ -196,17 +196,17 @@ class wpHandoff extends wpHandoffPlugin {
             'wp_default_editor'     =>  false,
             'gettext'               =>  array(
                 'rename_media_button'  =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'media_view_strings'    =>  array(
                 'remove_media_strings'  =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 )
             ),
             'media_view_settings'    =>  array(
                 'remove_media_settings'  =>  array(
-                    'priority'  =>  99999,
+                    'priority'  =>  999999,
                 ),
             ),
         );
@@ -249,16 +249,23 @@ class wpHandoff extends wpHandoffPlugin {
         );
 
         //register the plugin and init assets
-		$this -> register_plugin($this -> name, __FILE__, true);
+		$this -> register_plugin($this -> name, __FILE__, false);
 
         $this -> advance = 0;
 
         if(! empty($_GET['hand-off-mode'])) {
-            $redirect = $_SERVER['HTTP_REFERER'];
-            if(empty($redirect)) {
-                $redirect = admin_url();
+            $request = explode("?", $_SERVER['REQUEST_URI'])[0] . "?";
+            $gets = explode("&", explode("?", $_SERVER['REQUEST_URI'])[1]);
+            $index = 0;
+            foreach($gets as $get) {
+                if(! preg_match('/hand-off-mode(?==)/', $get)) {
+                    if($index) {
+                        $request .= "&";
+                    }
+                    $request .= $get;
+                    $index++;
+                }
             }
-
             switch($_GET['hand-off-mode']) {
                 case 'basic':
                     $this -> wp_logout();
@@ -268,7 +275,7 @@ class wpHandoff extends wpHandoffPlugin {
                     break;
             }
 
-            header('Location:' . $redirect);  //wp_redirect & wp_safe_redirect does not work :(
+            header('Location:' . $request);  //wp_redirect & wp_safe_redirect does not work :(
             exit();
         }
 
@@ -279,10 +286,17 @@ class wpHandoff extends wpHandoffPlugin {
 
     function admin_bar_menu($wp_admin_bar) {
         if(! empty($this -> advance)) {
+            $href = $_SERVER['REQUEST_URI'];
+            if(empty($_GET)) {
+                $href .= "?";
+            } else {
+                $href .= "&";
+            }
+            $href .= "hand-off-mode=basic";
             $wp_admin_bar->add_node(array(
                 'id' => 'hand-off-basic',
                 'title' => 'Basic',
-                'href' => admin_url('?hand-off-mode=basic'),
+                'href' => $href,
             ));
         }
     }
@@ -873,65 +887,73 @@ class wpHandoff extends wpHandoffPlugin {
 
     //Change Names
     function rename_plugin_menu() {
-        if(empty($this -> advance)) {
-            global $menu, $submenu;
+        global $menu, $submenu;
+        $this -> menu = $menu;
+        $this -> submenu = $submenu;
 
-            $rename = $this->options['settings_options']['menu_rename'];
-            $subrename = $this->options['settings_options']['submenu_rename'];
-            $orig = $this->options['settings_options']['menu_orig_names'];
-            $suborig = $this->options['settings_options']['submenu_orig_names'];
+        $rename = $this->options['settings_options']['menu_rename'];
+        $subrename = $this->options['settings_options']['submenu_rename'];
+        $orig = $this->options['settings_options']['menu_orig_names'];
+        $suborig = $this->options['settings_options']['submenu_orig_names'];
 
-            if (empty($orig)) {
-                $orig = array();
-                foreach ($menu as $n => $item) {
-                    if (strlen($item[0]) && !strcmp($item[2], 'edit.php?post_type=page')) {
-                        $menu[$n][0] = 'Edit Pages';    //default Pages name for plugin
-                    }
+        if (empty($orig)) {
+            $orig = array();
+            foreach ($this -> menu as $n => $item) {
+                if (strlen($item[0]) && !strcmp($item[2], 'edit.php?post_type=page')) {
+                    $this -> menu[$n][0] = 'Edit Pages';    //default Pages name for plugin
                 }
             }
+        }
 
-            if (!empty($rename)) {
-                foreach ($menu as $n => $item) {
-                    foreach ($rename as $k => $v) {
-                        if ($v != '') {
-                            if (!strcmp($item[2], $k)) {  //match item name with original
-                                preg_match('/\s*(\<span).*(\<\/span>)/i', $item[0], $matches);  //exclude notification html tags
-                                $menu[$n][0] = $v . $matches[0];
-                            }
+        if (!empty($rename)) {
+            foreach ($this -> menu as $n => $item) {
+                foreach ($rename as $k => $v) {
+                    if ($v != '') {
+                        if (!strcmp($item[2], $k)) {  //match item name with original
+                            preg_match('/\s*(\<span).*(\<\/span>)/i', $item[0], $matches);  //exclude notification html tags
+                            $this -> menu[$n][0] = $v . $matches[0];
                         }
                     }
                 }
             }
+        }
 
-            if (!empty($subrename)) {
-                foreach ($submenu as $n => $group) {
-                    foreach ($subrename as $key => $name) {
-                        if ($name != '') {
-                            foreach ($group as $parent => $item) {
-                                if (!strcmp($item[2], $key)) {
-                                    preg_match('/\s*(\<span).*(\<\/span>)/i', $submenu[$n][0], $matches);  //exclude notification html tags
-                                    $submenu[$n][$parent][0] = $name . $matches[0];
-                                }
+        if (!empty($subrename)) {
+            foreach ($this -> submenu as $n => $group) {
+                foreach ($subrename as $key => $name) {
+                    if ($name != '') {
+                        foreach ($group as $parent => $item) {
+                            if (!strcmp($item[2], $key)) {
+                                preg_match('/\s*(\<span).*(\<\/span>)/i', $this -> submenu[$n][0], $matches);  //exclude notification html tags
+                                $this -> submenu[$n][$parent][0] = $name . $matches[0];
                             }
                         }
                     }
                 }
             }
         }
+
+        //apply only when in basic
+        if(empty($this -> advance)) {
+            /*
+             * workaround $submenu does not persist data after remove_submenu_page method
+             * save local copy of $submenu
+             *
+             * save local copy of $menu for settings page
+             */
+            $menu = $this -> menu;
+            $submenu = $this -> submenu;
+            //end
+        }
     }
 
     //Hide Menu
     function remove_menus() {
-        /*
-         * workaround $submenu does not persist data after remove_submenu_page method
-         * save local copy of $submenu
-         *
-         * save local copy of $menu for settings page
-         */
-        global $menu, $submenu;
-        $this->menu = $menu;
-        $this->submenu = $submenu;
-        //end
+        if(empty($this -> menu) || empty($this -> submenu)) {
+            global $menu, $submenu;
+            $this->menu = $menu;
+            $this->submenu = $submenu;
+        }
 
         if(empty($this -> advance)) {
             $hidden = $this->options['settings_options']['menu_hidden'];
@@ -946,7 +968,7 @@ class wpHandoff extends wpHandoffPlugin {
                     }
                 }
             } else if (empty($orig)) {
-                foreach ($menu as $item) {
+                foreach ($this -> menu as $item) {
                     $found = false;
                     foreach ($this->default_menu as $file => $label) {
                         if (!strcmp($item[2], $file)) {
@@ -968,7 +990,7 @@ class wpHandoff extends wpHandoffPlugin {
                     }
                 }
             } else if (empty($orig)) {
-                foreach ($submenu as $parent => $group) {
+                foreach ($this -> submenu as $parent => $group) {
                     foreach ($group as $item) {
                         if (!strcmp($item[2], 'hand-off')) {
                             continue;
@@ -1236,7 +1258,7 @@ class wpHandoff extends wpHandoffPlugin {
     //redirec to dashboard after activation
     function redirect_to_dashboard($plugin) {
         if($plugin == $this -> name) {
-            wp_redirect(admin_url());  //dashboard
+            wp_redirect(admin_url("?hand-off-mode=basic"));  //dashboard
             exit;
         }
     }

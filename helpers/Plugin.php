@@ -29,7 +29,7 @@ class wpHandoffPlugin {
     //facebook vars
     var $username = '';
 
-    function Plugin() {
+    function __construct($args = false) {
         return true;
     }
 
