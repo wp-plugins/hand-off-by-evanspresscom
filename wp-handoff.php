@@ -249,7 +249,7 @@ class wpHandoff extends wpHandoffPlugin {
         );
 
         //register the plugin and init assets
-		$this -> register_plugin($this -> name, __FILE__, false);
+		$this -> register_plugin($this -> name, __FILE__, true);
 
         $this -> advance = 0;
 
