@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.0.0.0
+    Version: 1.0.1.0
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -134,20 +134,20 @@ class wpHandoff extends wpHandoffPlugin {
             'welcome_panel' =>  false,
             'admin_bar_menu'=>  array(
                 'admin_bar_menu'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 ),
             ),
             'admin_menu'    =>  array(
                 'rename_plugin_menu'            =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 ),
                 'remove_menus'  =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 ),
             ),
             'do_meta_boxes' =>  array(
                 'remove_widgets'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'wp_dashboard_setup'    =>  'setup_widgets',
@@ -168,27 +168,27 @@ class wpHandoff extends wpHandoffPlugin {
             'contextual_help'   =>  'remove_help',
             'page_row_actions'  =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'post_row_actions'  =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'tag_row_actions'   =>  array(
                 'remove_row_actions'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'manage_posts_columns'  =>  array(
                 'remove_columns'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'manage_pages_columns'  =>  array(
                 'remove_columns'    =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'plugin_action_links_' . $this -> name => 'plugin_action_links',
@@ -196,17 +196,17 @@ class wpHandoff extends wpHandoffPlugin {
             'wp_default_editor'     =>  false,
             'gettext'               =>  array(
                 'rename_media_button'  =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'media_view_strings'    =>  array(
                 'remove_media_strings'  =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 )
             ),
             'media_view_settings'    =>  array(
                 'remove_media_settings'  =>  array(
-                    'priority'  =>  999999,
+                    'priority'  =>  99999999999,
                 ),
             ),
         );
@@ -513,6 +513,13 @@ class wpHandoff extends wpHandoffPlugin {
                 }
             }
 
+            $advance = $_SERVER['REQUEST_URI'];
+            if(empty($_GET)) {
+                $advance .= "?";
+            } else {
+                $advance .= "&";
+            }
+            $advance .= "hand-off-mode=advance";
             $this->render('admin-bar', array(
                 'pre'           => $this->pre,
                 'menu'          => $menu,
@@ -523,6 +530,7 @@ class wpHandoff extends wpHandoffPlugin {
                 'post'          =>  $post,
                 'link'          =>  $link,
                 'label'         =>  $label,
+                'advance'       =>  $advance,
             ), true, 'admin');
 
             $this -> admin_aesthetics();
@@ -739,6 +747,7 @@ class wpHandoff extends wpHandoffPlugin {
                                 $sub[$key]['parent'] = false;
                             }
                         }
+
                         $this -> submenu[$file] = array_filter($sub);
                         $item['submenu'] = $sub;
                     }

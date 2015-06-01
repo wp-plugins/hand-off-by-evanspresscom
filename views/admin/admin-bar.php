@@ -21,7 +21,7 @@
         </ul></div>
         <div class="<?php echo $pre; ?>-admin-bar-action">
             <?php if(! empty($post)): ?><a href="<?php echo $link; ?>"><?php echo $label; ?></a><?php else: ?><a href="<?php echo home_url();?>">Home Page</a><?php endif; ?>
-            <a class="<?php echo $pre; ?>-admin-bar-advance" href="?hand-off-mode=advance">Advance</a>
+            <a class="<?php echo $pre; ?>-admin-bar-advance" href="<?= $advance; ?>">Advance</a>
             <?php if(! empty($support)): ?><a href="<?php echo $support; ?>" target="_blank" onclick="window.open('<?php echo $support; ?>', 'Support', 'menubar=0, status=0'); return false;">Support</a><?php endif; ?>
             <a class="<?php echo $pre; ?>-admin-bar-settings" href="<?php echo admin_url("options-general.php?page=hand-off"); ?>">Hand Off</a>
             <a class="<?php echo $pre; ?>-admin-bar-logout" href="<?php echo $logout; ?>">Log Out</a>
