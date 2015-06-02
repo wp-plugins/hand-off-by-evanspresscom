@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.0.1.0
+    Version: 1.0.1.1
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -67,7 +67,7 @@ class wpHandoff extends wpHandoffPlugin {
                 'login_logo'        =>  '',
                 'custom_logo'       =>  '',
                 //dashboard widgets
-                'rss_title'         =>  'Posts Feed',
+                'rss_title'         =>  'Updates, Tips and More from EvansPress.com',
                 'rss_url'           =>  'http://evanspress.com/feed/',
                 //settings tabs
                 'active_tab'        =>  '',
@@ -80,6 +80,7 @@ class wpHandoff extends wpHandoffPlugin {
                     'settings'  =>  'on',
                     'footer'    =>  'on',
                 ),
+                //meta boxes
                 'meta_hidden'     =>  array(
                     'formatdiv'         =>  'on',
                     'categorydiv'       =>  'on',
@@ -93,6 +94,7 @@ class wpHandoff extends wpHandoffPlugin {
                     'authordiv'         =>  'on',
                     'custom'            =>  'on',
                 ),
+                //row actions
                 'row_action_hidden'    =>  array(
                     'edit'      =>  'on',
                     'inline'    =>  'on',
@@ -138,10 +140,7 @@ class wpHandoff extends wpHandoffPlugin {
                 ),
             ),
             'admin_menu'    =>  array(
-                'rename_plugin_menu'            =>  array(
-                    'priority'  =>  99999999999,
-                ),
-                'remove_menus'  =>  array(
+                'mod_admin_menu'   =>  array(
                     'priority'  =>  99999999999,
                 ),
             ),
@@ -154,7 +153,7 @@ class wpHandoff extends wpHandoffPlugin {
             'login_head'    =>  false,
             'wp_ajax_login_logo_upload'    =>  'login_logo_upload',
             'wp_ajax_nopriv_login_logo_upload'  =>  'login_logo_upload',
-            'activated_plugin'  =>  'redirect_to_dashboard',
+            'activated_plugin'  =>  false,
             'load-index.php'    =>  'show_welcome_panel',
             'wp_after_admin_bar_render' =>  'admin_bar',
             'admin_head'        =>  'remove_media_button',
@@ -282,6 +281,15 @@ class wpHandoff extends wpHandoffPlugin {
         if(! empty($_COOKIE['hand-off-mode'])) {
             $this -> advance = 1;
         }
+    }
+
+    function mod_admin_menu() {
+        global $menu, $submenu;
+        $this -> menu = $menu;
+        $this -> submenu = $submenu;
+
+        $this -> rename_plugin_menu();
+        $this -> remove_menus();
     }
 
     function admin_bar_menu($wp_admin_bar) {
@@ -515,7 +523,9 @@ class wpHandoff extends wpHandoffPlugin {
 
             $advance = $_SERVER['REQUEST_URI'];
             if(empty($_GET)) {
-                $advance .= "?";
+                if(substr($advance, -1) != "?") {
+                    $advance .= "?";
+                }
             } else {
                 $advance .= "&";
             }
@@ -710,11 +720,10 @@ class wpHandoff extends wpHandoffPlugin {
 
     function settings() {
         global $wp_roles;
-
         //menu & submenu
         $order = $this -> options['settings_options']['menu_order'];
         $orig = $this -> options['settings_options']['menu_orig_names'];
-        $hidden = $this -> options['settings_options']['menu_hidden'];
+        $hidden = array();
         $rename = $this -> options['settings_options']['menu_rename'];
         $orig = $this -> options['settings_options']['menu_orig_names'];
         $sub_hidden = $this -> options['settings_options']['submenu_hidden'];
@@ -723,16 +732,25 @@ class wpHandoff extends wpHandoffPlugin {
         $menu = array();
         $index = 0;
 
+        foreach($this -> options['settings_options']['menu_hidden'] as $key => $value) {    //remove non-existent hidden menus
+            list($name, $file) = explode($this -> pre, $key);
+            foreach($this -> menu as $i => $item) {
+                if($file == $item[2]) {
+                    $hidden[$key] = "on";
+                }
+            }
+        }
+
         foreach($this -> menu as $i => $item) { //use local copy to show hidden menus
             if($item[0] != '') {
                 $index++;
                 $item[0] = preg_replace('/\s*(\<span).*(\<\/span>)/i', '', $item[0]);   //remove notification html tags
 
                 foreach($this -> submenu as $file => $sub) {
-                    if(! strcmp($sub[2], 'hand-off')) {
+                    if($sub[2] == 'hand-off') {
                         continue;
                     }
-                    if(! strcmp($file, $item[2])) {
+                    if($file == $item[2]) {
                         foreach($sub as $key => $s) {
                             if(! strcmp($s[2], 'hand-off')) {
                                 unset($sub[$key]);
@@ -863,6 +881,7 @@ class wpHandoff extends wpHandoffPlugin {
             'link'          =>  $this -> options['settings_options']['image_default_link_type'],
             'size'          =>  $this -> options['settings_options']['image_default_size'],
             'roles'         =>  $wp_roles -> roles,
+            'redirect'      =>  $this -> options['settings_options']['login_redirect'],
             ), true, 'admin');
     }
 
@@ -896,10 +915,6 @@ class wpHandoff extends wpHandoffPlugin {
 
     //Change Names
     function rename_plugin_menu() {
-        global $menu, $submenu;
-        $this -> menu = $menu;
-        $this -> submenu = $submenu;
-
         $rename = $this->options['settings_options']['menu_rename'];
         $subrename = $this->options['settings_options']['submenu_rename'];
         $orig = $this->options['settings_options']['menu_orig_names'];
@@ -958,12 +973,6 @@ class wpHandoff extends wpHandoffPlugin {
 
     //Hide Menu
     function remove_menus() {
-        if(empty($this -> menu) || empty($this -> submenu)) {
-            global $menu, $submenu;
-            $this->menu = $menu;
-            $this->submenu = $submenu;
-        }
-
         if(empty($this -> advance)) {
             $hidden = $this->options['settings_options']['menu_hidden'];
             $subhidden = $this->options['settings_options']['submenu_hidden'];
@@ -1264,10 +1273,10 @@ class wpHandoff extends wpHandoffPlugin {
         die();
     }
 
-    //redirec to dashboard after activation
-    function redirect_to_dashboard($plugin) {
+    //redirect after activation
+    function activated_plugin($plugin) {
         if($plugin == $this -> name) {
-            wp_redirect(admin_url("?hand-off-mode=basic"));  //dashboard
+            wp_redirect(admin_url("options-general.php?page=hand-off"));  //dashboard
             exit;
         }
     }
