@@ -25,5 +25,10 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.0.1.1 =
+* Changed RSS Feed default title
+= 1.0.1.0 =
+* Fixed Basic and Advance buttons link
+* Changed redirect URL after plugin activation 
 = 1.0.0.0 =
 * Stable Release
