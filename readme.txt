@@ -27,8 +27,9 @@ Yes.
 == Changelog ==
 = 1.0.1.1 =
 * Changed RSS Feed default title
+* Changed redirect URL after plugin activation 
 = 1.0.1.0 =
 * Fixed Basic and Advance buttons link
-* Changed redirect URL after plugin activation 
+* Fixed missing submenu items issue
 = 1.0.0.0 =
 * Stable Release
