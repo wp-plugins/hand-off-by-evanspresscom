@@ -965,6 +965,7 @@ class wpHandoff extends wpHandoffPlugin {
              *
              * save local copy of $menu for settings page
              */
+            global $menu, $submenu;
             $menu = $this -> menu;
             $submenu = $this -> submenu;
             //end
