@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.0.1.1
+    Version: 1.0.1.2
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -424,7 +424,7 @@ class wpHandoff extends wpHandoffPlugin {
                         $group[$key]['link'] = admin_url($sub[2]);
                     }
 
-                    if (!strcmp($page, $sub[2]) || (!strcmp($page_title, $sub[0]) && !strcmp(preg_replace('/\?.*/', '', $page), $parent)) || (!strcmp($parent, 'index.php') && !strcmp($sub[2], 'index.php') && strpos($page, 'wp-admin') !== false)) {
+                    if ($page == $sub[2] || ($page_title == $sub[0] && preg_replace('/\?.*/', '', $page) == $parent) || ($parent == 'index.php' && $sub[2] == 'index.php' && strpos($page, 'wp-admin') !== false)) {
                         $group[$key]['active'] = true;
                     } else {
                         $group[$key]['active'] = false;
@@ -438,7 +438,7 @@ class wpHandoff extends wpHandoffPlugin {
             foreach ($menu as $index => $item) {
                 $active = false;
                 foreach ($submenu as $parent => $group) { //attach submenu to its respective menu
-                    if (!strcmp($item[2], $parent)) {
+                    if ($item[2] == $parent) {
                         $menu[$index]['submenu'] = $group;
                         foreach ($group as $sub) {
                             //check if submenu belongs under current menu
@@ -450,7 +450,7 @@ class wpHandoff extends wpHandoffPlugin {
                 }
 
                 $menu[$index]['link'] = admin_url($item[2]);
-                if (!strcmp($page, $item[2]) || $active || (strpos($page, 'wp-admin') !== false && !strcmp($item[2], 'index.php'))) {
+                if ($page == $item[2] || $active || (strpos($page, 'wp-admin') !== false && $item[2] == 'index.php')) {
                     $menu[$index]['active'] = true;
                 } else {
                     $menu[$index]['active'] = false;
@@ -560,7 +560,7 @@ class wpHandoff extends wpHandoffPlugin {
             $actions_hide = $this->options['settings_options']['row_action_hidden'];
 
             foreach ($actions_hide as $action => $value) {
-                if (!strcmp($action, 'custom')) {   //ignore custom value for later
+                if ($action == 'custom') {   //ignore custom value for later
                     continue;
                 }
                 if ($value == "on") {
@@ -577,7 +577,7 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach ($actions as $a => $label) {
                     $found = false;
                     foreach ($this->default_actions as $action => $l) {
-                        if (!strcmp($a, $action)) {
+                        if ($a == $action) {
                             $found = true;
                             break;
                         }
@@ -599,7 +599,7 @@ class wpHandoff extends wpHandoffPlugin {
             $columns_hide = $this -> options['settings_options']['manage_columns_hidden'];
 
             foreach($columns_hide as $column => $value) {
-                if(! strcmp($column, 'custom')) {
+                if($column == 'custom') {
                     continue;
                 }
                 if($value == "on") {
@@ -616,7 +616,7 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach($columns as $c => $label) {
                     $found = false;
                     foreach($this -> default_columns as $column => $l) {
-                        if(! strcmp($c, $column)) {
+                        if($c == $column) {
                             $found = true;
                             break;
                         }
@@ -674,7 +674,7 @@ class wpHandoff extends wpHandoffPlugin {
             } else {
                 $indexed = false;
                 foreach($pages_order as $i => $id) {
-                    if(! strcmp($id, $item -> ID)) {
+                    if($id == $item -> ID) {
                         $pages[$i] = $item;
                         $indexed = true;
                         break;
@@ -704,7 +704,7 @@ class wpHandoff extends wpHandoffPlugin {
             $pages_hidden = array();
             foreach($pages as $page) {
                 foreach($tmp as $key => $hidden) {
-                    if(! strcmp($page -> ID . $this -> pre . $page -> post_title, $key)) {
+                    if($page -> ID . $this -> pre . $page -> post_title == $key) {
                         $pages_hidden[$key] = $hidden;
                         break;
                     }
@@ -752,14 +752,14 @@ class wpHandoff extends wpHandoffPlugin {
                     }
                     if($file == $item[2]) {
                         foreach($sub as $key => $s) {
-                            if(! strcmp($s[2], 'hand-off')) {
+                            if($s[2] == 'hand-off') {
                                 unset($sub[$key]);
                                 continue;
                             }
                             if($s[0] != '') {
                                 $sub[$key][0] = preg_replace('/\s*(\<span).*(\<\/span>)/i', '', $s[0]);   //remove notification html tags
                             }
-                            if(! strcmp($file, $s[2])) {
+                            if($file == $s[2]) {
                                 $sub[$key]['parent'] = true;
                             } else {
                                 $sub[$key]['parent'] = false;
@@ -776,7 +776,7 @@ class wpHandoff extends wpHandoffPlugin {
                 } else {
                     $indexed = false;
                     foreach($order as $i => $file) {
-                        if(! strcmp($file, $item[2])) {
+                        if($file == $item[2]) {
                             $menu[$i] = $item;
                             $indexed = true;
                             break;
@@ -805,14 +805,14 @@ class wpHandoff extends wpHandoffPlugin {
             $hidden = array();
             $sub_hidden = array();
             foreach($menu as $item) {
-                if(strcmp($item[2], 'index.php') !== 0
-                && strcmp($item[2], 'edit.php?post_type=page') !== 0
+                if($item[2] != 'index.php'
+                && $item[2] != 'edit.php?post_type=page'
                 ) {
                     $hidden[$item[0] . $this->pre . $item[2]] = "on";
                 }
 
                 foreach($item['submenu'] as $sub) {
-                    if(strcmp($sub[2], 'hand-off') !== 0) {
+                    if($sub[2] != 'hand-off') {
                         $sub_hidden[$item[2] . $this->pre . $sub[2]] = "on";
                     }
                 }
@@ -923,7 +923,7 @@ class wpHandoff extends wpHandoffPlugin {
         if (empty($orig)) {
             $orig = array();
             foreach ($this -> menu as $n => $item) {
-                if (strlen($item[0]) && !strcmp($item[2], 'edit.php?post_type=page')) {
+                if (strlen($item[0]) && $item[2] == 'edit.php?post_type=page') {
                     $this -> menu[$n][0] = 'Edit Pages';    //default Pages name for plugin
                 }
             }
@@ -933,7 +933,7 @@ class wpHandoff extends wpHandoffPlugin {
             foreach ($this -> menu as $n => $item) {
                 foreach ($rename as $k => $v) {
                     if ($v != '') {
-                        if (!strcmp($item[2], $k)) {  //match item name with original
+                        if ($item[2] == $k) {  //match item name with original
                             preg_match('/\s*(\<span).*(\<\/span>)/i', $item[0], $matches);  //exclude notification html tags
                             $this -> menu[$n][0] = $v . $matches[0];
                         }
@@ -947,7 +947,7 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach ($subrename as $key => $name) {
                     if ($name != '') {
                         foreach ($group as $parent => $item) {
-                            if (!strcmp($item[2], $key)) {
+                            if ($item[2] == $key) {
                                 preg_match('/\s*(\<span).*(\<\/span>)/i', $this -> submenu[$n][0], $matches);  //exclude notification html tags
                                 $this -> submenu[$n][$parent][0] = $name . $matches[0];
                             }
@@ -990,7 +990,7 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach ($this -> menu as $item) {
                     $found = false;
                     foreach ($this->default_menu as $file => $label) {
-                        if (!strcmp($item[2], $file)) {
+                        if ($item[2] == $file) {
                             $found = true;
                         }
                     }
@@ -1011,7 +1011,7 @@ class wpHandoff extends wpHandoffPlugin {
             } else if (empty($orig)) {
                 foreach ($this -> submenu as $parent => $group) {
                     foreach ($group as $item) {
-                        if (!strcmp($item[2], 'hand-off')) {
+                        if ($item[2] == 'hand-off') {
                             continue;
                         } else {
                             remove_submenu_page($parent, $item[2]);
@@ -1040,21 +1040,21 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach ($widgets as $context => $group) {
                     foreach ($group as $priority => $meta_boxes) {
                         foreach ($meta_boxes as $id => $meta_box) {
-                            if ((!strcmp($id, $this->pre . 'posts-feed')
-                                    && !strcmp($page, 'dashboard')
-                                    && !strcmp($context, 'normal'))
-                                || !strcmp($id, 'submitdiv')
+                            if (($id == $this->pre . 'posts-feed'
+                                && $page == 'dashboard'
+                                && $context == 'normal')
+                                || $id == 'submitdiv'
                             ) {
                                 continue;
                             } else {
-                                if (!strcmp($page, 'dashboard')) {
+                                if ($page == 'dashboard') {
                                     remove_meta_box($id, $page, $context);
                                 } else {
                                     foreach ($meta_hidden as $box => $value) {
-                                        if (!strcmp($box, 'custom')) {  //ignore for later use
+                                        if ($box == 'custom') {  //ignore for later use
                                             continue;
                                         }
-                                        if (!strcmp($box, $id) && $value == "on") {
+                                        if ($box == $id && $value == "on") {
                                             remove_meta_box($id, $page, $context);
                                         }
                                     }
@@ -1062,7 +1062,7 @@ class wpHandoff extends wpHandoffPlugin {
                                     if (!empty($meta_hidden['custom']) && $meta_hidden['custom'] == "on") {
                                         $found = false;
                                         foreach ($this->default_meta as $meta => $label) {
-                                            if (!strcmp($id, $meta)) {
+                                            if ($id == $meta) {
                                                 $found = true;
                                                 break;
                                             }
@@ -1109,7 +1109,7 @@ class wpHandoff extends wpHandoffPlugin {
         $logo = $this -> options['settings_options']['login_logo'];
         $custom = $this -> options['settings_options']['custom_logo'];
 
-        if(! empty($logo) && ! empty($custom) && ! strcmp($logo, $custom)):
+        if(! empty($logo) && ! empty($custom) && $logo == $custom):
             $logo = str_replace(basename($logo), "thumbnail/" . basename($logo), $logo);
             list($width, $height) = getimagesize($logo);
         ?>
@@ -1223,7 +1223,7 @@ class wpHandoff extends wpHandoffPlugin {
         <?php
         endif;
 
-        if(! empty($editor['addnew']) && $editor['addnew'] == "on" && (! strcmp($current_screen -> id, 'edit-page') || ! strcmp($current_screen -> id, 'page'))):
+        if(! empty($editor['addnew']) && $editor['addnew'] == "on" && ($current_screen -> id == 'edit-page') || $current_screen -> id == 'page'):
         ?>
         <style type="text/css">
             #wpbody-content .wrap > h2 > a { display: none; }
@@ -1239,7 +1239,7 @@ class wpHandoff extends wpHandoffPlugin {
         <?php
         endif;
 
-        if(! empty($editor['richeditor']) && $editor['richeditor'] == "on" && (! strcmp($current_screen -> id, 'page') || ! strcmp($current_screen -> id, 'post'))):
+        if(! empty($editor['richeditor']) && $editor['richeditor'] == "on" && ($current_screen -> id == 'page' || $current_screen -> id == 'post')):
         ?>
         <style type="text/css">
             .wp-switch-editor.switch-html { display: none; }
