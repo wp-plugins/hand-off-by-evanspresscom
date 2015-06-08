@@ -12,7 +12,7 @@ An Admin UI made easier.
 Hand Off is a Wordpress plugin that offers users a customizable administrator user interface without jeopardizing Wordpress\' very own admin UI. By having the ability to customize the admin interface, the user can manipulate UI elements for easy access and limit clutter.
 
 == Installation ==
-1. Upload `the directory \"wordpress-sql-backup\"` to the `/wp-content/plugins/` directory
+1. Upload `the directory \"wp-handoff\"` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the \'Plugins\' menu in WordPress
 
 == Frequently Asked Questions ==
