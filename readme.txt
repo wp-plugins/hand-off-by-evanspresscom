@@ -25,6 +25,8 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.0.1.3 =
+* Custom menu compatibility
 = 1.0.1.2 =
 * Changed string comparison method
 = 1.0.1.1 =

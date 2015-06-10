@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.0.1.2
+    Version: 1.0.1.3
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -393,6 +393,7 @@ class wpHandoff extends wpHandoffPlugin {
         if(empty($this -> advance)) {
             global $wp_admin_bar, $menu, $submenu, $current_screen, $wp_the_query;
 
+            $admin = is_admin();
             $page = basename($_SERVER['REQUEST_URI']);
             $page_title = get_the_title();
             $pages = $this -> get_pages();
@@ -419,9 +420,13 @@ class wpHandoff extends wpHandoffPlugin {
             foreach ($submenu as $parent => $group) {
                 foreach ($group as $key => $sub) {
                     if (!preg_match('/.+(\.php)/i', $sub[2])) {
-                        $group[$key]['link'] = admin_url($parent . '?page=' . $sub[2]);
+                        $group[$key]['link'] = $parent . '?page=' . $sub[2];
                     } else {
-                        $group[$key]['link'] = admin_url($sub[2]);
+                        $group[$key]['link'] = $sub[2];
+                    }
+
+                    if(! $admin) {  //rectify links when not in admin ui
+                        $group[$key]['link'] = admin_url($group[$key]['link']);
                     }
 
                     if ($page == $sub[2] || ($page_title == $sub[0] && preg_replace('/\?.*/', '', $page) == $parent) || ($parent == 'index.php' && $sub[2] == 'index.php' && strpos($page, 'wp-admin') !== false)) {
@@ -436,6 +441,9 @@ class wpHandoff extends wpHandoffPlugin {
 
             //find currently active menu
             foreach ($menu as $index => $item) {
+                if($item[0] == "") {    //skip empty content e.g. separators
+                    continue;
+                }
                 $active = false;
                 foreach ($submenu as $parent => $group) { //attach submenu to its respective menu
                     if ($item[2] == $parent) {
@@ -449,7 +457,18 @@ class wpHandoff extends wpHandoffPlugin {
                     }
                 }
 
-                $menu[$index]['link'] = admin_url($item[2]);
+                if(! $admin) {  //rectify links when not in admin ui
+                    $menu[$index]['link'] = admin_url($item[2]);
+                } else {
+                    if(strpos($item[2], ".php") === false) {
+                        $item[2] = "admin.php/" . $item[2] . "?page=" . $item[2];
+                        foreach($menu[$index]['submenu'] as $key => $sub) {
+                            $menu[$index]['submenu'][$key]['link'] = "admin.php/" . $sub['link'];
+                        }
+                    }
+                    $menu[$index]['link'] = $item[2];
+                }
+
                 if ($page == $item[2] || $active || (strpos($page, 'wp-admin') !== false && $item[2] == 'index.php')) {
                     $menu[$index]['active'] = true;
                 } else {
@@ -458,7 +477,6 @@ class wpHandoff extends wpHandoffPlugin {
 
             }
 
-            $admin = is_admin();
             $link = "";
             $label = "";
             $post = false;
