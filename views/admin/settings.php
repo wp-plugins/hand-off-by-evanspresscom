@@ -42,7 +42,7 @@
             </div><div class="<?php echo $pre; ?>-block">
                 <div class="<?php echo $pre; ?>-block-title">Login Logo</div>
                 <div class="<?php echo $pre; ?>-block-content">
-                    <p>Customize your Login Logo Image here. Upload a local image to the server.</p>
+                    <p>Customize your Login Logo Image here. Upload a local image to the server.<br />Uploading a custom logo will direct Wordpress Logo links to your Wordpress Install.</p>
                     <hr />
                     <div class="<?php echo $pre; ?>-login-image-form">
                         <div>
@@ -194,18 +194,19 @@
                     <h2>Admin Bar Page Shortcut</h2>
                     <p>Click on the item to rename it.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
-                        <?php foreach($pages as $index => $item): ?>
-                            <?php if(! isset($pages_hidden[$item -> ID . $pre . $item -> post_title])): ?>
-                                <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
-                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo $pages_orig[$item -> ID]; ?>"/>
-                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[<?php echo $index; ?>]" value="<?php echo $item -> ID ?>"/>
-                                    <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_hidden[<?php echo $item -> ID . $pre . $item -> post_title; ?>]" />
-                                    <div class="<?php echo $pre; ?>-menu-name">
-                                        <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $item -> ID; ?>]" value="<?php echo $item -> post_title; ?>" />
-                                        <div class="<?php echo $pre; ?>-menu-html"><?php echo $item -> post_title; ?></div>
-                                    </div>
-                                </li>
-                            <?php endif; ?>
+                        <?php foreach($pages_show as $hide => $val): ?>
+                            <?php
+                            list($id, $title) = explode($pre, $hide);
+                            ?>
+                            <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
+                                <input class="hide" type="text" name="<?php echo $pre; ?>pages_orig_names[<?php echo $id; ?>]" value="<?php echo $pages_orig[$id]; ?>"/>
+                                <input class="hide" type="text" name="<?php echo $pre; ?>pages_order[]" value="<?php echo $id ?>"/>
+                                <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $hide; ?>]" checked />
+                                <div class="<?php echo $pre; ?>-menu-name">
+                                    <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $title; ?>" />
+                                    <div class="<?php echo $pre; ?>-menu-html"><?php echo $title; ?></div>
+                                </div>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -213,19 +214,18 @@
                     <h4>Pages:</h4>
                     <p>Drag items to the left column to display it to the admin bar.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
-                        <?php foreach($pages_hidden as $hide => $val): ?>
-                            <?php
-                            list($id, $title) = explode($pre, $hide);
-                            ?>
-                            <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
-                                <input class="hide" type="text" name="<?php echo $pre; ?>pages_orig_names[<?php echo $id; ?>]" value="<?php echo $pages_orig[$id]; ?>"/>
-                                <input class="hide" type="text" name="<?php echo $pre; ?>pages_order[]" value="<?php echo $id ?>"/>
-                                <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_hidden[<?php echo $hide; ?>]" checked />
-                                <div class="<?php echo $pre; ?>-menu-name">
-                                    <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $title; ?>" />
-                                    <div class="<?php echo $pre; ?>-menu-html"><?php echo $title; ?></div>
-                                </div>
-                            </li>
+                        <?php foreach($pages as $index => $item): ?>
+                            <?php if(! isset($pages_show[$item -> ID . $pre . $item -> post_title])): ?>
+                                <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
+                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo $pages_orig[$item -> ID]; ?>"/>
+                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[<?php echo $index; ?>]" value="<?php echo $item -> ID ?>"/>
+                                    <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID . $pre . $item -> post_title; ?>]" />
+                                    <div class="<?php echo $pre; ?>-menu-name">
+                                        <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $item -> ID; ?>]" value="<?php echo $item -> post_title; ?>" />
+                                        <div class="<?php echo $pre; ?>-menu-html"><?php echo $item -> post_title; ?></div>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </ul>
                 </div>

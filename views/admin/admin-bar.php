@@ -15,7 +15,7 @@
         </ul>
         <hr />
         <ul class="<?php echo $pre; ?>-admin-bar-pages">
-            <?php foreach($pages as $page): ?><?php if(! isset($pages_hidden[$page -> ID . $pre . $page -> post_title])): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item">
+            <?php foreach($pages as $page): ?><?php if(isset($pages_show[$page -> ID . $pre . $page -> post_title])): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item">
                 <a href="<?php echo $page -> link; ?>"><?php echo $page -> post_title; ?></a>
                 </li><?php endif; ?><?php endforeach; ?>
         </ul></div>

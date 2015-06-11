@@ -32,9 +32,10 @@
 .wpHandoff-admin-bar-show { border-bottom: 5px solid #00a0d2;clear: both; color: #fff; cursor: pointer; height: 27px; line-height: 18px; text-align: center; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; -ms-box-sizing: content-box; }
 .wpHandoff-admin-bar-show span { font: 300 13px/27px "Open Sans", sans-serif; }
 
-@media screen and (max-width: 783px) {
+@media screen and (max-width: 782px) {
     .wpHandoff-admin-bar-show { height: 46px; }
     .wpHandoff-admin-bar-show span { line-height: 46px; }
+    #wpadminbar li#wp-admin-bar-wp-logo { display: none; }
 }
 
 .wpHandoff-welcome-panel-content { display: block !important; padding-bottom: 23px; } /* override inline style from welcome panel */

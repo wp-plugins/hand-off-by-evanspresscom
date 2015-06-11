@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.0.1.3
+    Version: 1.1.1.3
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -60,7 +60,7 @@ class wpHandoff extends wpHandoffPlugin {
                 'submenu_orig_names'=>  '',
                 //pages
                 'pages_order'       =>  '',
-                'pages_hidden'      =>  '',
+                'pages_show'        =>  '',
                 'pages_rename'      =>  '',
                 'pages_orig_names'  =>  '',
                 //login
@@ -155,6 +155,7 @@ class wpHandoff extends wpHandoffPlugin {
             'wp_ajax_nopriv_login_logo_upload'  =>  'login_logo_upload',
             'activated_plugin'  =>  false,
             'load-index.php'    =>  'show_welcome_panel',
+            'wp_before_admin_bar_render'=>  'change_admin_bar',
             'wp_after_admin_bar_render' =>  'admin_bar',
             'admin_head'        =>  'remove_media_button',
             'wp_logout'         =>  false,
@@ -165,6 +166,7 @@ class wpHandoff extends wpHandoffPlugin {
             'menu_order'        =>  'change_menu_order',
             'screen_options_show_screen'    =>  'remove_screen_options',
             'contextual_help'   =>  'remove_help',
+            'login_headerurl'   =>  false,
             'page_row_actions'  =>  array(
                 'remove_row_actions'    =>  array(
                     'priority'  =>  99999999999,
@@ -280,6 +282,52 @@ class wpHandoff extends wpHandoffPlugin {
 
         if(! empty($_COOKIE['hand-off-mode'])) {
             $this -> advance = 1;
+        }
+    }
+
+    function change_admin_bar() {
+        global $wp_admin_bar;
+        $default = $this -> options['settings_options']['login_logo'];
+        $custom = $this -> options['settings_options']['custom_logo'];
+
+        if(! empty($default) && ! empty($custom) && $default == $custom):
+        $logo = $wp_admin_bar -> get_node('wp-logo');
+        $wp_admin_bar -> remove_node('wp-logo');
+
+        $logo -> href = home_url();
+
+        $nodes = $wp_admin_bar -> get_nodes();
+        foreach($nodes as $node) {
+            $wp_admin_bar -> remove_node($node -> id);
+        }
+        $wp_admin_bar -> add_node($logo);
+        foreach($nodes as $node) {
+            $wp_admin_bar -> add_node($node);
+        }
+
+            $default = str_replace(basename($default), "wp-logo/" . basename($default), $default);
+            ?>
+            <style type="text/css">
+                #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before { content: url(<?php echo $default; ?>) 0 0 no-repeat transparent; }
+            </style>
+        <?php
+        elseif(empty($this -> advance)):
+            ?>
+            <style type="text/css">
+                #wpadminbar li#wp-admin-bar-wp-logo { display: none; }
+            </style>
+        <?php
+        endif;
+    }
+
+    function login_headerurl($url) {
+        $default = $this -> options['settings_options']['login_logo'];
+        $custom = $this -> options['settings_options']['custom_logo'];
+
+        if(! empty($default) && ! empty($custom) && $default == $custom) {
+            return home_url();
+        } else {
+            return $url;
         }
     }
 
@@ -552,7 +600,7 @@ class wpHandoff extends wpHandoffPlugin {
                 'pre'           => $this->pre,
                 'menu'          => $menu,
                 'pages'         =>  $pages,
-                'pages_hidden'  =>  $this -> options['settings_options']['pages_hidden'],
+                'pages_show'    =>  $this -> options['settings_options']['pages_show'],
                 'support'       =>  $this -> options['settings_options']['support_link'],
                 'logout'        => wp_logout_url(get_permalink()),
                 'post'          =>  $post,
@@ -677,7 +725,7 @@ class wpHandoff extends wpHandoffPlugin {
         $pages_order = $this -> options['settings_options']['pages_order'];
         $pages_rename = $this -> options['settings_options']['pages_rename'];
         $pages_orig = $this -> options['settings_options']['pages_orig_names'];
-        $pages_hidden = $this -> options['settings_options']['pages_hidden'];
+        $pages_show = $this -> options['settings_options']['pages_show'];
         $index = 0;
 
         foreach($raw_pages as $i => $item) { //use local copy to show hidden menus
@@ -711,27 +759,9 @@ class wpHandoff extends wpHandoffPlugin {
             foreach($pages as $page) {
                 $pages_orig[$page -> ID] = $page -> post_title;
             }
-
-            //apply default menu
-            $pages_hidden = array();
-            foreach($pages as $page) {
-                $pages_hidden[$page -> ID . $this -> pre . $page -> post_title] = "on";
-            }
-        } else {    //allow only existing pages
-            $tmp = $pages_hidden;
-            $pages_hidden = array();
-            foreach($pages as $page) {
-                foreach($tmp as $key => $hidden) {
-                    if($page -> ID . $this -> pre . $page -> post_title == $key) {
-                        $pages_hidden[$key] = $hidden;
-                        break;
-                    }
-                }
-            }
         }
 
         $this -> options['settings_options']['pages_orig_names'] = $pages_orig;
-        $this -> options['settings_options']['pages_hidden'] = $pages_hidden;
 
         return $pages;
     }
@@ -891,7 +921,7 @@ class wpHandoff extends wpHandoffPlugin {
             'admin_hidden'  =>  $this -> options['settings_options']['admin_hidden'],
             'rss_title' =>  empty($rss_title) ? 'Posts Feed' : $rss_title,
             'pages' =>  $pages,
-            'pages_hidden'  =>  $this -> options['settings_options']['pages_hidden'],
+            'pages_show'  =>  $this -> options['settings_options']['pages_show'],
             'pages_orig'    =>  $this -> options['settings_options']['pages_orig_names'],
             'support'       =>  $this -> options['settings_options']['support_link'],
             'editor'        =>  $this -> options['settings_options']['editor_hidden'],
@@ -1128,10 +1158,10 @@ class wpHandoff extends wpHandoffPlugin {
         $custom = $this -> options['settings_options']['custom_logo'];
 
         if(! empty($logo) && ! empty($custom) && $logo == $custom):
-            $logo = str_replace(basename($logo), "thumbnail/" . basename($logo), $logo);
+            $logo = str_replace(basename($logo), "wp-login/" . basename($logo), $logo);
             list($width, $height) = getimagesize($logo);
         ?>
-        <style>
+        <style type="text/css">
             body.login #login h1 a { background: url(<?php echo $logo; ?>) 0 0 no-repeat transparent; width: <?php echo $width; ?>px; height: <?php echo $height; ?>px; max-width: 320px; max-height: 260px;}
         </style>
         <?php
@@ -1281,11 +1311,15 @@ class wpHandoff extends wpHandoffPlugin {
                     // Automatically rotate images based on EXIF meta data:
                     'auto_orient' => true
                 ),
-                'thumbnail' => array(
+                'wp-login'  =>  array(
                     'max_width' => 320,
                     'max_height' => 260
+                ),
+                'wp-logo' => array(
+                    'max_width' => 20,
+                    'max_height' => 20
                 )
-            )
+            ),
             )
         );
 

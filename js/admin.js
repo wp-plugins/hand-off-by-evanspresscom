@@ -238,16 +238,28 @@
                     var input = $("input[name^='wpHandoffmenu_rename'], input[name^='wpHandoffpages_rename']", name);
                     var html = input.next();
                     var default_text = input.val();
-                    var hidden = $("input[name^='wpHandoffmenu_hidden'], input[name^='wpHandoffpages_hidden']", that);
+                    var menu_hidden = $("input[name^='wpHandoffmenu_hidden']", that);
+                    var pages_show = $("input[name^='wpHandoffpages_show']", that);
                     var arrow = $(".wpHandoff-submenu-arrow", that);
                     var submenu = $(".wpHandoff-submenu-list", that);
                     var subitem = $(".wpHandoff-submenu-item", that);
 
-                    //check if the item belongs to the hidden column
+                    //check if the menu belongs to the hidden column
+                    //check if the page belongs to the show column
                     if (that.parents("div.wpHandoff-menu-hidden").length) {
-                        hidden.prop("checked", true);
+                        if(menu_hidden.length) {
+                            menu_hidden.prop("checked", true);
+                        }
+                        if(pages_show.length) {
+                            pages_show.prop("checked", false);
+                        }
                     } else {
-                        hidden.prop("checked", false);
+                        if(menu_hidden.length) {
+                            menu_hidden.prop("checked", false);
+                        }
+                        if(pages_show.length) {
+                            pages_show.prop("checked", true);
+                        }
                     }
 
                     //remove all events
@@ -510,7 +522,7 @@
             $("input[type='checkbox']", '.wpHandoff-settings').each(function() {
                 var that = $(this);
 
-                if(that.attr('name').indexOf('wpHandoffmenu_hidden') == -1 && that.attr('name').indexOf('wpHandoffpages_hidden') == -1) {   //exclude menu & pages
+                if(that.attr('name').indexOf('wpHandoffmenu_hidden') == -1 && that.attr('name').indexOf('wpHandoffpages_show') == -1) {   //exclude menu & pages
                     if (that.prop("checked")) {
                         that.prop("checked", false);
                     } else {
