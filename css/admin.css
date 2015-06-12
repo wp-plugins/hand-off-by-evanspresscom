@@ -18,7 +18,7 @@
 .wpHandoff-admin-bar-menu-item > a:focus,
 .wpHandoff-admin-bar-menu-item > a:hover { color: #ffffff; display: block; font: 600 14px/18px "Open Sans", sans-serif; max-width: 200px; overflow: hidden; padding: 8px 10px; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
 .wpHandoff-admin-bar-menu-item > a:hover { background: #0074a2; }
-.wpHandoff-admin-bar-page-header { color: #ffffff; cursor: default; padding: 5px; }
+.wpHandoff-admin-bar-page-header { color: #ffffff; cursor: default; font: 300 14px/14px "Open Sans", sans-serif; min-width: auto; padding: 10px; }
 .wpHandoff-admin-bar-pages .wpHandoff-admin-bar-menu-item > a:hover { background: #78AB46; }
 .wpHandoff-admin-bar-menu-item.active { background: #333333; }
 .wpHandoff-admin-bar-menu-item.active > a { background: #0074a2; }

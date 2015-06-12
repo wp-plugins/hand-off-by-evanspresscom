@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.1.1.3
+    Version: 1.1.1.4
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -313,7 +313,7 @@ class wpHandoff extends wpHandoffPlugin {
             $default = str_replace(basename($default), "wp-logo/" . basename($default), $default);
             ?>
             <style type="text/css">
-                #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before { content: url(<?php echo $default; ?>) 0 0 no-repeat transparent; }
+                #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before { content: url(<?php echo $default; ?>); }
             </style>
         <?php
         endif;
