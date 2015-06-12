@@ -72,13 +72,14 @@ class wpHandoff extends wpHandoffPlugin {
                 //settings tabs
                 'active_tab'        =>  '',
                 //toggles
-                'admin_hidden'  =>  array(
-                    'role'      =>  'administrator',
-                    'admin_bar' =>  'on',
-                    'title'     =>  'on',
-                    'dismiss'   =>  'on',
-                    'settings'  =>  'on',
-                    'footer'    =>  'on',
+                'admin_hidden'      =>  array(
+                    'role'          =>  'administrator',
+                    'admin_bar'     =>  'on',
+                    'logo'          =>  'on',
+                    'post_header'   =>  'on',
+                    'dismiss'       =>  'on',
+                    'settings'      =>  'on',
+                    'footer'        =>  'on',
                 ),
                 //meta boxes
                 'meta_hidden'     =>  array(
@@ -101,6 +102,10 @@ class wpHandoff extends wpHandoffPlugin {
                     'trash'     =>  'on',
                     'view'      =>  'on',
                     'custom'    =>  'on',
+                ),
+                //hand off menu
+                'hand_off'   =>  array(
+                    'page_header'   =>  'Go To',
                 ),
                 'manage_columns_hidden' =>  array(
                     'cb'            =>  'on',
@@ -309,12 +314,6 @@ class wpHandoff extends wpHandoffPlugin {
             ?>
             <style type="text/css">
                 #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before { content: url(<?php echo $default; ?>) 0 0 no-repeat transparent; }
-            </style>
-        <?php
-        elseif(empty($this -> advance)):
-            ?>
-            <style type="text/css">
-                #wpadminbar li#wp-admin-bar-wp-logo { display: none; }
             </style>
         <?php
         endif;
@@ -607,6 +606,7 @@ class wpHandoff extends wpHandoffPlugin {
                 'link'          =>  $link,
                 'label'         =>  $label,
                 'advance'       =>  $advance,
+                'hand_off'      =>  $this -> options['settings_options']['hand_off'],
             ), true, 'admin');
 
             $this -> admin_aesthetics();
@@ -930,6 +930,7 @@ class wpHandoff extends wpHandoffPlugin {
             'size'          =>  $this -> options['settings_options']['image_default_size'],
             'roles'         =>  $wp_roles -> roles,
             'redirect'      =>  $this -> options['settings_options']['login_redirect'],
+            'hand_off'      =>  $this -> options['settings_options']['hand_off'],
             ), true, 'admin');
     }
 
@@ -1223,6 +1224,14 @@ class wpHandoff extends wpHandoffPlugin {
         <?php
         endif;
 
+        if(! empty($admin['logo'])):
+        ?>
+        <style type="text/css">
+            #wpadminbar li#wp-admin-bar-wp-logo { display: none; }
+        </style>
+        <?php
+        endif;
+
         if(! empty($admin['logout']) && $admin['logout'] == "on"):
         ?>
         <style type="text/css">
@@ -1231,7 +1240,7 @@ class wpHandoff extends wpHandoffPlugin {
         <?php
         endif;
 
-        if(! empty($admin['title']) && $admin['title'] == "on"):
+        if(! empty($admin['post_header']) && $admin['post_header'] == "on"):
         ?>
         <style type="text/css">
             #wpbody-content .wrap > h2 { font-size: 0; }

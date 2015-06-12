@@ -26,7 +26,13 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
-= 1.1.1.3
+= 1.1.1.4 =
+* Added Hand Off option box
+* Added Hand Off page menu toggle
+* Added Hand Off page menu header
+* Added admin bar logo toggle
+* String corrections
+= 1.1.1.3 =
 * Admin Bar Custom Logo compatibility
 ** Custom Logo requires re-upload
 * Page Link hide by default

@@ -28,7 +28,7 @@
         </div>
         <div id="<?php echo $pre; ?>general" class="<?php echo $pre; ?>-content">
             <div class="<?php echo $pre; ?>-hint">
-                <p>"Handoff by EvansPress.com" is meant to make WordPress as a CMS easier to use for clients and end-users alike. The name "Handoff" literally means the suggested interface that designers wants to handoff to the administrator a WP powered website. Handoff by EvansPress.com does all of this without restricting the administrator in any sort of way. The administrator at anytime can select the "Advance" button to go back to a full and standard WP admin section. Get started by personalizing the WP CMS for your clients by placing a custom welcome message or you can add a logo to brand the login screen. Keep your client up to date by embedding your news feed or maybe even an industry related feed. Hand Off by EvansPress.com was created as a collaborative effort between Johnathan Evans as the user experience designer for the project and Lex Marion as core developer. This plugin is was created after years of requests for assistance on the WP admin backend by EP clients. We hope you enjoy it and it becomes a useful tool for you and your clients.</p>
+                <p>"Hand Off by EvansPress.com" is meant to make WordPress as a CMS easier to use for clients and end-users alike. The name "Hand Off" literally means the suggested interface that designers wants to hand off to the administrator a WP powered website. Hand Off by EvansPress.com does all of this without restricting the administrator in any sort of way. The administrator at anytime can select the "Advance" button to go back to a full and standard WP admin section. Get started by personalizing the WP CMS for your clients by placing a custom welcome message or you can add a logo to brand the login screen. Keep your client up to date by embedding your news feed or maybe even an industry related feed. Hand Off by EvansPress.com was created as a collaborative effort between Johnathan Evans as the user experience designer for the project and Lex Marion as core developer. This plugin is was created after years of requests for assistance on the WP admin backend by EP clients. We hope you enjoy it and it becomes a useful tool for you and your clients.</p>
                 <a href="#">Dismiss</a>
                 <hr />
             </div>
@@ -191,6 +191,10 @@
             </div>
             <div class="<?php echo $pre; ?>-menu-wrap">
                 <div class="<?php echo $pre; ?>-menu-show">
+                    <div>
+                        <label for="<?php echo $pre; ?>-hand-off-page-header">Header:</label>
+                        <input id="<?php echo $pre; ?>-hand-off-page-header" type="text" name="<?php echo $pre; ?>hand_off[page_header]" value="<?php echo $hand_off['page_header']; ?>" />
+                    </div>
                     <h2>Admin Bar Page Shortcut</h2>
                     <p>Click on the item to rename it.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
@@ -248,12 +252,16 @@
                             <label for="<?php echo $pre; ?>-admin-adminbar">Default Admin Bar</label>
                         </div>
                         <div>
+                            <input id="<?php echo $pre; ?>-admin-logo" type="checkbox" name="<?php echo $pre; ?>admin_hidden[logo]" <?php if(! isset($admin_hidden['logo'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-admin-logo">Admin Bar Logo</label>
+                        </div>
+                        <div>
                             <input id="<?php echo $pre; ?>-admin-logout" type="checkbox" name="<?php echo $pre; ?>admin_hidden[logout]" <?php if(! isset($admin_hidden['logout'])): ?>checked<?php endif; ?>/>
                             <label for="<?php echo $pre; ?>-admin-logout">Log Out</label>
                         </div>
                         <div>
-                            <input id="<?php echo $pre; ?>-admin-title" type="checkbox" name="<?php echo $pre; ?>admin_hidden[title]" <?php if(! isset($admin_hidden['title'])): ?>checked<?php endif; ?>/>
-                            <label for="<?php echo $pre; ?>-admin-title">Page Title</label>
+                            <input id="<?php echo $pre; ?>-admin-post_header" type="checkbox" name="<?php echo $pre; ?>admin_hidden[post_header]" <?php if(! isset($admin_hidden['post_header'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-admin-post_header">Post/Page Header</label>
                         </div>
                         <div>
                             <input id="<?php echo $pre; ?>-admin-dismiss" type="checkbox" name="<?php echo $pre; ?>admin_hidden[dismiss]" <?php if(! isset($admin_hidden['dismiss'])): ?>checked<?php endif; ?>/>
@@ -274,6 +282,26 @@
                     </div>
                 </div>
             </div><div class="<?php echo $pre; ?>-block">
+                <div class="<?php echo $pre; ?>-block-title">Editor</div>
+                <div class="<?php echo $pre; ?>-block-content">
+                    <p>Uncheck items to remove from Page/Page Editor.</p>
+                    <hr />
+                    <div>
+                        <div>
+                            <input id="<?php echo $pre; ?>-editor-add-new" type="checkbox" name="<?php echo $pre; ?>editor_hidden[addnew]" <?php if(! isset($editor['addnew'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-editor-add-new">Add New (Pages only)</label>
+                        </div>
+                        <div>
+                            <input id="<?php echo $pre; ?>-editor-rich-editor" type="checkbox" name="<?php echo $pre; ?>editor_hidden[richeditor]" <?php if(! isset($editor['richeditor'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-editor-rich-editor">HTML Editor</label>
+                        </div>
+                        <div>
+                            <input id="<?php echo $pre; ?>-editor-slug-bar" type="checkbox" name="<?php echo $pre; ?>editor_hidden[slugbar]" <?php if(! isset($editor['slugbar'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-editor-slug-bar">Slug Bar</label>
+                        </div>
+                    </div>
+                </div>
+            </div><div class="<?php echo $pre; ?>-block">
                 <div class="<?php echo $pre; ?>-block-title">Columns</div>
                 <div class="<?php echo $pre; ?>-block-content">
                     <p>Uncheck to hide field column.</p>
@@ -285,6 +313,18 @@
                                 <label for="<?php echo $pre; ?>-manage-column-<?php echo $column; ?>"><?php echo $label; ?></label>
                             </div>
                         <?php endforeach; ?>
+                    </div>
+                </div>
+            </div><div class="<?php echo $pre; ?>-block">
+                <div class="<?php echo $pre; ?>-block-title">Hand Off</div>
+                <div class="<?php echo $pre; ?>-block-content">
+                    <p>Uncheck items to remove from Hand Off menu.</p>
+                    <hr />
+                    <div>
+                        <div>
+                            <input id="<?php echo $pre; ?>-hand-off-pages" type="checkbox" name="<?php echo $pre; ?>hand_off[hide_pages]" <?php if(! isset($hand_off['hide_pages'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-hand-off-pages">Pages Menu</label>
+                        </div>
                     </div>
                 </div>
             </div><div class="<?php echo $pre; ?>-block">
@@ -313,26 +353,6 @@
                             <label for="<?php echo $pre; ?>-row-action-<?php echo $action; ?>"><?php echo $label; ?></label>
                         </div>
                         <?php endforeach; ?>
-                    </div>
-                </div>
-            </div><div class="<?php echo $pre; ?>-block">
-                <div class="<?php echo $pre; ?>-block-title">Editor</div>
-                <div class="<?php echo $pre; ?>-block-content">
-                    <p>Uncheck items to remove from Page/Page Editor.</p>
-                    <hr />
-                    <div>
-                        <div>
-                            <input id="<?php echo $pre; ?>-editor-add-new" type="checkbox" name="<?php echo $pre; ?>editor_hidden[addnew]" <?php if(! isset($editor['addnew'])): ?>checked<?php endif; ?>/>
-                            <label for="<?php echo $pre; ?>-editor-add-new">Add New (Pages only)</label>
-                        </div>
-                        <div>
-                            <input id="<?php echo $pre; ?>-editor-rich-editor" type="checkbox" name="<?php echo $pre; ?>editor_hidden[richeditor]" <?php if(! isset($editor['richeditor'])): ?>checked<?php endif; ?>/>
-                            <label for="<?php echo $pre; ?>-editor-rich-editor">HTML Editor</label>
-                        </div>
-                        <div>
-                            <input id="<?php echo $pre; ?>-editor-slug-bar" type="checkbox" name="<?php echo $pre; ?>editor_hidden[slugbar]" <?php if(! isset($editor['slugbar'])): ?>checked<?php endif; ?>/>
-                            <label for="<?php echo $pre; ?>-editor-slug-bar">Slug Bar</label>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -399,7 +419,7 @@
         </div>
         <div id="<?php echo $pre; ?>roles" class="<?php echo $pre; ?>-content hide">
             <div class="<?php echo $pre; ?>-hint">
-                <p>Roles will allow you to limit access to the Advance functions of Handoff. This feature can actually help an administrator create a tailored CMS experience for users below the administrator role on a website.</p>
+                <p>Roles will allow you to limit access to the Advance functions of Hand Off. This feature can actually help an administrator create a tailored CMS experience for users below the administrator role on a website.</p>
                 <a href="#">Dismiss</a>
                 <hr />
             </div>
