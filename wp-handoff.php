@@ -587,7 +587,8 @@ class wpHandoff extends wpHandoffPlugin {
             }
 
             $advance = $_SERVER['REQUEST_URI'];
-            if(empty($_GET)) {
+            $get = array_filter($_GET);
+            if(empty($get)) {
                 if(substr($advance, -1) != "?") {
                     $advance .= "?";
                 }
