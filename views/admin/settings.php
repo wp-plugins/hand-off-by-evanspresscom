@@ -198,17 +198,23 @@
                     <h2>Admin Bar Page Shortcut</h2>
                     <p>Click on the item to rename it.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
-                        <?php foreach($pages_show as $hide => $val): ?>
+                        <?php foreach($pages_show as $id => $val): ?>
                             <?php
-                            list($id, $title) = explode($pre, $hide);
+                            $page = null;
+                            foreach($pages as $item) {
+                                if($item -> ID == $id) {
+                                    $page = $item;
+                                    break;
+                                }
+                            }
                             ?>
                             <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
                                 <input class="hide" type="text" name="<?php echo $pre; ?>pages_orig_names[<?php echo $id; ?>]" value="<?php echo $pages_orig[$id]; ?>"/>
                                 <input class="hide" type="text" name="<?php echo $pre; ?>pages_order[]" value="<?php echo $id ?>"/>
                                 <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $hide; ?>]" checked />
                                 <div class="<?php echo $pre; ?>-menu-name">
-                                    <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $title; ?>" />
-                                    <div class="<?php echo $pre; ?>-menu-html"><?php echo $title; ?></div>
+                                    <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $page -> post_title; ?>" />
+                                    <div class="<?php echo $pre; ?>-menu-html"><?php echo $page -> post_title; ?></div>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -219,11 +225,11 @@
                     <p>Drag items to the left column to display it to the admin bar.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
                         <?php foreach($pages as $index => $item): ?>
-                            <?php if(! isset($pages_show[$item -> ID . $pre . $item -> post_title])): ?>
+                            <?php if(! isset($pages_show[$item -> ID])): ?>
                                 <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
                                     <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo $pages_orig[$item -> ID]; ?>"/>
                                     <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[<?php echo $index; ?>]" value="<?php echo $item -> ID ?>"/>
-                                    <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID . $pre . $item -> post_title; ?>]" />
+                                    <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID; ?>]" />
                                     <div class="<?php echo $pre; ?>-menu-name">
                                         <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $item -> ID; ?>]" value="<?php echo $item -> post_title; ?>" />
                                         <div class="<?php echo $pre; ?>-menu-html"><?php echo $item -> post_title; ?></div>

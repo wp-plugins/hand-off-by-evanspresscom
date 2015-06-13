@@ -26,6 +26,9 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.1.2.4 =
+* Page menu compatibility
+** Page menu requires reset
 = 1.1.1.4 =
 * Added Hand Off option box
 * Added Hand Off page menu toggle

@@ -12,11 +12,10 @@
                     <?php endforeach; ?>
                 </ul>
                 </li><?php endif; ?><?php endforeach; ?></ul>
-        <?php if(! isset($hand_off['hide_pages'])): ?>
+        <?php if(! isset($hand_off['hide_pages']) && ! empty($pages_show)): ?>
         <hr />
-
         <ul class="<?php echo $pre; ?>-admin-bar-pages">
-            <?php if(! empty($hand_off['page_header'])):?><li class="<?php echo $pre; ?>-admin-bar-menu-item <?php echo $pre; ?>-admin-bar-page-header"><?php echo $hand_off['page_header']; ?>:</li><?php endif; ?><?php foreach($pages as $page): ?><?php if(isset($pages_show[$page -> ID . $pre . $page -> post_title])): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item">
+            <?php if(! empty($hand_off['page_header'])):?><li class="<?php echo $pre; ?>-admin-bar-menu-item <?php echo $pre; ?>-admin-bar-page-header"><?php echo $hand_off['page_header']; ?>:</li><?php endif; ?><?php foreach($pages as $page): ?><?php if(isset($pages_show[$page -> ID])): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item">
                 <a href="<?php echo $page -> link; ?>"><?php echo $page -> post_title; ?></a>
                 </li><?php endif; ?><?php endforeach; ?>
         </ul><?php endif; ?></div>
