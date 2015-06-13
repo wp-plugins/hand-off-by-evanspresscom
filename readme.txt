@@ -29,6 +29,7 @@ Yes.
 = 1.1.2.4 =
 * Page menu compatibility
 ** Page menu requires reset
+* Mode button fix
 = 1.1.1.4 =
 * Added Hand Off option box
 * Added Hand Off page menu toggle
