@@ -26,6 +26,8 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.1.3.5 =
+* Mode button link fix
 = 1.1.3.4 =
 * Added side by side menu toggle
 ** Admin Menu and Page Menu side by side by default
