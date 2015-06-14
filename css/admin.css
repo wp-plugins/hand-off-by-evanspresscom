@@ -32,6 +32,8 @@
 .wpHandoff-admin-bar-submenu-item > a.active{ color: #ffffff; font-weight: bold; }
 .wpHandoff-admin-bar-show { border-bottom: 5px solid #00a0d2;clear: both; color: #fff; cursor: pointer; height: 27px; line-height: 18px; text-align: center; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; box-sizing: content-box; -moz-box-sizing: content-box; -webkit-box-sizing: content-box; -ms-box-sizing: content-box; }
 .wpHandoff-admin-bar-show span { font: 300 13px/27px "Open Sans", sans-serif; }
+.wpHandoff-admin-bar-menus.side,
+.wpHandoff-admin-bar-pages.side { display: inline-block; width: 49%; vertical-align: top; }
 
 @media screen and (max-width: 782px) {
     .wpHandoff-admin-bar-show { height: 46px; }

@@ -16,7 +16,7 @@
         <div class="<?php echo $pre; ?>-tabs">
             <div class="<?php echo $pre; ?>-tabs-wrap">
                 <div class="<?php echo $pre; ?>-tabs-wrapper">
-                    <div data-target="#<?php echo $pre; ?>general" class="title selected">General</div>
+                    <div data-target="#<?php echo $pre; ?>general" class="title">General</div>
                     <div data-target="#<?php echo $pre; ?>menu" class="title">Menu</div>
                     <div data-target="#<?php echo $pre; ?>pages" class="title">Pages</div>
                     <div data-target="#<?php echo $pre; ?>toggles" class="title">Toggles</div>
@@ -26,7 +26,10 @@
                 </div>
             </div>
         </div>
-        <div id="<?php echo $pre; ?>general" class="<?php echo $pre; ?>-content">
+        <div class="<?php echo $pre; ?>-content">
+            <div>Please Wait...</div>
+        </div>
+        <div id="<?php echo $pre; ?>general" class="<?php echo $pre; ?>-content hide">
             <div class="<?php echo $pre; ?>-hint">
                 <p>"Hand Off by EvansPress.com" is meant to make WordPress as a CMS easier to use for clients and end-users alike. The name "Hand Off" literally means the suggested interface that designers wants to hand off to the administrator a WP powered website. Hand Off by EvansPress.com does all of this without restricting the administrator in any sort of way. The administrator at anytime can select the "Advance" button to go back to a full and standard WP admin section. Get started by personalizing the WP CMS for your clients by placing a custom welcome message or you can add a logo to brand the login screen. Keep your client up to date by embedding your news feed or maybe even an industry related feed. Hand Off by EvansPress.com was created as a collaborative effort between Johnathan Evans as the user experience designer for the project and Lex Marion as core developer. This plugin is was created after years of requests for assistance on the WP admin backend by EP clients. We hope you enjoy it and it becomes a useful tool for you and your clients.</p>
                 <a href="#">Dismiss</a>
@@ -211,7 +214,7 @@
                             <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
                                 <input class="hide" type="text" name="<?php echo $pre; ?>pages_orig_names[<?php echo $id; ?>]" value="<?php echo $pages_orig[$id]; ?>"/>
                                 <input class="hide" type="text" name="<?php echo $pre; ?>pages_order[]" value="<?php echo $id ?>"/>
-                                <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $hide; ?>]" checked />
+                                <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $id; ?>]" checked />
                                 <div class="<?php echo $pre; ?>-menu-name">
                                     <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $page -> post_title; ?>" />
                                     <div class="<?php echo $pre; ?>-menu-html"><?php echo $page -> post_title; ?></div>
@@ -224,11 +227,11 @@
                     <h4>Pages:</h4>
                     <p>Drag items to the left column to display it to the admin bar.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
-                        <?php foreach($pages as $index => $item): ?>
+                        <?php foreach($pages as $item): ?>
                             <?php if(! isset($pages_show[$item -> ID])): ?>
                                 <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
                                     <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo $pages_orig[$item -> ID]; ?>"/>
-                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[<?php echo $index; ?>]" value="<?php echo $item -> ID ?>"/>
+                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[]" value="<?php echo $item -> ID ?>"/>
                                     <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID; ?>]" />
                                     <div class="<?php echo $pre; ?>-menu-name">
                                         <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $item -> ID; ?>]" value="<?php echo $item -> post_title; ?>" />
@@ -324,12 +327,16 @@
             </div><div class="<?php echo $pre; ?>-block">
                 <div class="<?php echo $pre; ?>-block-title">Hand Off</div>
                 <div class="<?php echo $pre; ?>-block-content">
-                    <p>Uncheck items to remove from Hand Off menu.</p>
+                    <p>Uncheck items to toggle/remove Hand Off menu elements.</p>
                     <hr />
                     <div>
                         <div>
                             <input id="<?php echo $pre; ?>-hand-off-pages" type="checkbox" name="<?php echo $pre; ?>hand_off[hide_pages]" <?php if(! isset($hand_off['hide_pages'])): ?>checked<?php endif; ?>/>
                             <label for="<?php echo $pre; ?>-hand-off-pages">Pages Menu</label>
+                        </div>
+                        <div>
+                            <input id="<?php echo $pre; ?>-hand-off-side-by-side" type="checkbox" name="<?php echo $pre; ?>hand_off[side_by_side]" <?php if(! isset($hand_off['side_by_side'])): ?>checked<?php endif; ?>/>
+                            <label for="<?php echo $pre; ?>-hand-off-side-by-side">Side by Side Menus</label>
                         </div>
                     </div>
                 </div>

@@ -175,10 +175,14 @@
                     that.removeClass("focus");
                 });
 
-                if(that.attr("data-target") == active_tab.val()) {
+                if($.trim(active_tab.val()).length && that.attr("data-target") == active_tab.val()) {
                     that.trigger(window.interact.touchStart).trigger(window.interact.touchEnd);
                 }
             });
+
+            if(! $.trim(active_tab.val()).length) {
+                a.eq(0).trigger(window.interact.touchStart).trigger(window.interact.touchEnd);
+            }
 
             content.each(function() {
                 var that = $(this);

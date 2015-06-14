@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.1.2.4
+    Version: 1.1.3.4
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -260,13 +260,16 @@ class wpHandoff extends wpHandoffPlugin {
         $this -> advance = 0;
 
         if(! empty($_GET['hand-off-mode'])) {
-            $request = explode("?", $_SERVER['REQUEST_URI'])[0] . "?";
+            $request = explode("?", $_SERVER['REQUEST_URI'])[0];
             $gets = explode("&", explode("?", $_SERVER['REQUEST_URI'])[1]);
             $index = 0;
+
             foreach($gets as $get) {
                 if(! preg_match('/hand-off-mode(?==)/', $get)) {
                     if($index) {
                         $request .= "&";
+                    } else {
+                        $request .= "?";
                     }
                     $request .= $get;
                     $index++;
@@ -442,48 +445,58 @@ class wpHandoff extends wpHandoffPlugin {
 
             $admin = is_admin();
             $page = basename($_SERVER['REQUEST_URI']);
-            $page_title = get_the_title();
             $pages = $this -> get_pages();
 
             foreach($pages as $index => $p) {
                 $pages[$index] -> link = admin_url('post.php?post=' . $p -> ID . '&action=edit');
             }
 
-            if (is_admin()) {
-                $page_title = get_admin_page_title();
+            //add links to submenu assign to respective menu
+            foreach ($menu as $index => $item) {
+                if($item[0] == "") {    //skip empty content e.g. separators
+                    continue;
+                }
+                foreach ($submenu as $parent => $group) { //attach submenu to its respective menu
+                    if ($item[2] == $parent) {
+                        foreach ($group as $key => $sub) {
+                            $group[$key]['link'] = $sub[2];
+
+                            if (! $admin) {  //rectify links when not in admin ui
+                                $group[$key]['link'] = admin_url($group[$key]['link']);
+                            }
+                        }
+                        $menu[$index]['submenu'] = $group;
+                    }
+                }
             }
 
-            foreach ($meta as $page => $widgets) {
-                foreach ($widgets as $context => $group) {
-                    foreach ($group as $id => $widget) {
-                        if (!empty($meta_hidden[$page][$context][$id])) {
-                            $meta[$page][$context][$id]['hidden'] = true;
+            //rectify links when necessary
+            foreach($menu as $index => $item) {
+                if($item[0] == "") {
+                    continue;
+                }
+
+                if(! $admin) {
+                    $menu[$index]['link'] = admin_url($item[2]);
+                } else {
+                    $file = $item[2];
+                    if(strpos($item[2], ".php") === false) {
+                        $file = false;
+                    }
+                    if(! $file) {
+                        $item[2] = "admin.php?page=" . $item[2];
+                    }
+                    foreach($menu[$index]['submenu'] as $key => $sub) {
+                        if(strpos($sub[2], ".php") === false) {
+                            if (!$file) {
+                                $menu[$index]['submenu'][$key]['link'] = "admin.php?page=" . $sub['link'];
+                            } else {
+                                $menu[$index]['submenu'][$key]['link'] = $file . "?page=" . $sub['link'];
+                            }
                         }
                     }
+                    $menu[$index]['link'] = $item[2];
                 }
-            }
-
-            //find currently active submenu
-            foreach ($submenu as $parent => $group) {
-                foreach ($group as $key => $sub) {
-                    if (!preg_match('/.+(\.php)/i', $sub[2])) {
-                        $group[$key]['link'] = $parent . '?page=' . $sub[2];
-                    } else {
-                        $group[$key]['link'] = $sub[2];
-                    }
-
-                    if(! $admin) {  //rectify links when not in admin ui
-                        $group[$key]['link'] = admin_url($group[$key]['link']);
-                    }
-
-                    if ($page == $sub[2] || ($page_title == $sub[0] && preg_replace('/\?.*/', '', $page) == $parent) || ($parent == 'index.php' && $sub[2] == 'index.php' && strpos($page, 'wp-admin') !== false)) {
-                        $group[$key]['active'] = true;
-                    } else {
-                        $group[$key]['active'] = false;
-                    }
-                }
-
-                $submenu[$parent] = $group;
             }
 
             //find currently active menu
@@ -491,29 +504,16 @@ class wpHandoff extends wpHandoffPlugin {
                 if($item[0] == "") {    //skip empty content e.g. separators
                     continue;
                 }
-                $active = false;
-                foreach ($submenu as $parent => $group) { //attach submenu to its respective menu
-                    if ($item[2] == $parent) {
-                        $menu[$index]['submenu'] = $group;
-                        foreach ($group as $sub) {
-                            //check if submenu belongs under current menu
-                            if ($sub['active']) {
-                                $active = true;
-                            }
-                        }
-                    }
-                }
 
-                if(! $admin) {  //rectify links when not in admin ui
-                    $menu[$index]['link'] = admin_url($item[2]);
-                } else {
-                    if(strpos($item[2], ".php") === false) {
-                        $item[2] = "admin.php/" . $item[2] . "?page=" . $item[2];
-                        foreach($menu[$index]['submenu'] as $key => $sub) {
-                            $menu[$index]['submenu'][$key]['link'] = "admin.php/" . $sub['link'];
-                        }
+                //find active submenu
+                $active = false;
+                foreach ($item['submenu'] as $i => $sub) {
+                    $menu[$index]['submenu'][$i]['active'] = false;
+                    //check if submenu belongs under current menu
+                    if ($sub['link'] == $page) {
+                        $active = true;
+                        $menu[$index]['submenu'][$i]['active'] = true;
                     }
-                    $menu[$index]['link'] = $item[2];
                 }
 
                 if ($page == $item[2] || $active || (strpos($page, 'wp-admin') !== false && $item[2] == 'index.php')) {

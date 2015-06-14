@@ -1,5 +1,5 @@
 <div id="<?php echo $pre; ?>-admin-bar" data-admin-url="<?php echo admin_url(); ?>">
-    <div class="<?php echo $pre; ?>-admin-bar-menu hide"><div><ul class="<?php echo $pre; ?>-admin-bar-menus">
+    <div class="<?php echo $pre; ?>-admin-bar-menu hide"><div><ul class="<?php echo $pre; ?>-admin-bar-menus  <?php if(! isset($hand_off['side_by_side'])): ?>side<?php endif; ?>">
             <?php foreach($menu as $item): ?><?php if($item[0] != '' && ! $item['hidden']): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item <?php if($item['active']): ?>active<?php endif; ?>">
                 <a href="<?php echo $item['link']; ?>"><?php echo $item[0]; ?></a>
                 <ul class="<?php echo $pre; ?>-admin-bar-submenu">
@@ -13,8 +13,8 @@
                 </ul>
                 </li><?php endif; ?><?php endforeach; ?></ul>
         <?php if(! isset($hand_off['hide_pages']) && ! empty($pages_show)): ?>
-        <hr />
-        <ul class="<?php echo $pre; ?>-admin-bar-pages">
+        <?php if(isset($hand_off['side_by_side'])): ?><hr /><?php endif; ?>
+        <ul class="<?php echo $pre; ?>-admin-bar-pages <?php if(! isset($hand_off['side_by_side'])): ?>side<?php endif; ?>">
             <?php if(! empty($hand_off['page_header'])):?><li class="<?php echo $pre; ?>-admin-bar-menu-item <?php echo $pre; ?>-admin-bar-page-header"><?php echo $hand_off['page_header']; ?>:</li><?php endif; ?><?php foreach($pages as $page): ?><?php if(isset($pages_show[$page -> ID])): ?><li class="<?php echo $pre; ?>-admin-bar-menu-item">
                 <a href="<?php echo $page -> link; ?>"><?php echo $page -> post_title; ?></a>
                 </li><?php endif; ?><?php endforeach; ?>

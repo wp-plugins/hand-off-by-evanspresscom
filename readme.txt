@@ -26,6 +26,13 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.1.3.4 =
+* Added side by side menu toggle
+** Admin Menu and Page Menu side by side by default
+* Mode button link fix
+* Admin Menu fixes
+* Custom Menu fixes
+* Page Menu fixes
 = 1.1.2.4 =
 * Page menu compatibility
 ** Page menu requires reset
