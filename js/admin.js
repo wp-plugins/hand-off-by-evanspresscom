@@ -545,9 +545,11 @@
         var bar = progress.eq(1);
         var custom = $("#wpHandoff-custom-logo");
         var custom_logo = $(".wpHandoff-custom-logo");
+        var siteurl = $("#siteurl").val();
 
         var update_preview = function(url) {
             logo_preview.attr('src', url);
+            url = url.replace(siteurl, '');
             custom.val(url);
             custom_logo.val(url);
         };

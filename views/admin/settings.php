@@ -7,12 +7,8 @@
 
     ?>
         <?php submit_button(); ?>
-        <?php foreach($menu as $item): ?>
-            <?php if(isset($hidden[$item[0] . $pre . $item[2]]) && $item[0] != ''): ?>
-        <input type="text" hidden name="<?php echo $pre; ?>menu_orig_names[<?php echo $item['index'] ?>]" value="<?php echo strip_tags($item[0]); ?>"/>
-            <?php endif; ?>
-        <?php endforeach; ?>
         <input type="text" hidden name="<?php echo $pre; ?>active_tab" value="<?php echo $active_tab; ?>" />
+        <input id="siteurl" type="text" hidden value="<?php echo site_url(); ?>" />
         <div class="<?php echo $pre; ?>-tabs">
             <div class="<?php echo $pre; ?>-tabs-wrap">
                 <div class="<?php echo $pre; ?>-tabs-wrapper">
@@ -195,12 +191,13 @@
             <div class="<?php echo $pre; ?>-menu-wrap">
                 <div class="<?php echo $pre; ?>-menu-show">
                     <div>
-                        <label for="<?php echo $pre; ?>-hand-off-page-header">Header:</label>
+                        <label for="<?php echo $pre; ?>-hand-off-page-header">Title:</label>
                         <input id="<?php echo $pre; ?>-hand-off-page-header" type="text" name="<?php echo $pre; ?>hand_off[page_header]" value="<?php echo $hand_off['page_header']; ?>" />
                     </div>
                     <h2>Admin Bar Page Shortcut</h2>
                     <p>Click on the item to rename it.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
+                        <?php if(! empty($pages_show)): ?>
                         <?php foreach($pages_show as $id => $val): ?>
                             <?php
                             $page = null;
@@ -221,6 +218,7 @@
                                 </div>
                             </li>
                         <?php endforeach; ?>
+                        <?php endif; ?>
                     </ul>
                 </div>
                 <div class="<?php echo $pre; ?>-menu-hidden">
@@ -230,7 +228,7 @@
                         <?php foreach($pages as $item): ?>
                             <?php if(! isset($pages_show[$item -> ID])): ?>
                                 <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
-                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo $pages_orig[$item -> ID]; ?>"/>
+                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo ! empty($pages_orig[$item -> ID]) ? $pages_orig[$item -> ID] : ''; ?>"/>
                                     <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[]" value="<?php echo $item -> ID ?>"/>
                                     <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID; ?>]" />
                                     <div class="<?php echo $pre; ?>-menu-name">

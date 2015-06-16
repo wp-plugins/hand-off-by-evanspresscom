@@ -26,6 +26,14 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.1.3.6 =
+* Pages defaults to Edit All Pages
+* Deleted pages stripped from pages menu
+* Page menu Header changed to Title
+* Custom Page menu order
+* Logo site localization
+* Asset version
+* Miscellaneous fixes
 = 1.1.3.5 =
 * Mode button link fix
 = 1.1.3.4 =

@@ -3,7 +3,7 @@
     Plugin Name: Hand Off by EvansPress.com
     Plugin URI: http://www.evanspress.com
     Description: An Admin UI made easier.
-    Version: 1.1.3.5
+    Version: 1.1.3.6
     Author: Johnathan Evans (UX), Lex Marion Bataller (DEV)
     Author URI: http://www.evanspress.com
     Network: false
@@ -21,6 +21,7 @@ class wpHandoff extends wpHandoffPlugin {
 
     function __construct($args = false) {
         $this -> name = plugin_basename(__FILE__);
+        $this -> version = '1.1.3.6';
 
         $this -> scripts = array(
             'admin' =>  array('jquery'   =>  false,
@@ -106,6 +107,8 @@ class wpHandoff extends wpHandoffPlugin {
                 //hand off menu
                 'hand_off'   =>  array(
                     'page_header'   =>  'Go To',
+                    'hide_pages'    =>  'on',
+                    'side_by_side'  =>  'on',
                 ),
                 'manage_columns_hidden' =>  array(
                     'cb'            =>  'on',
@@ -255,7 +258,7 @@ class wpHandoff extends wpHandoffPlugin {
         );
 
         //register the plugin and init assets
-		$this -> register_plugin($this -> name, __FILE__, true);
+		$this -> register_plugin($this -> name, __FILE__, false);
 
         $this -> advance = 0;
 
@@ -291,6 +294,15 @@ class wpHandoff extends wpHandoffPlugin {
         if(! empty($_COOKIE['hand-off-mode'])) {
             $this -> advance = 1;
         }
+
+        if(! empty($this -> options['settings_options']['pages_show'])) {
+            foreach($this -> options['settings_options']['pages_show'] as $id => $value) {
+                if(! get_post($id)) {
+                    unset($this -> options['settings_options']['pages_show']);
+                }
+            }
+            $this -> options['settings_options']['pages_show'] = array_filter($this -> options['settings_options']['pages_show']);
+        }
     }
 
     function change_admin_bar() {
@@ -314,6 +326,9 @@ class wpHandoff extends wpHandoffPlugin {
         }
 
             $default = str_replace(basename($default), "wp-logo/" . basename($default), $default);
+            if(strpos($default, site_url()) === false) {    //for version 1.1.3.5 and earlier
+                $default = site_url() . $default;
+            }
             ?>
             <style type="text/css">
                 #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before { content: url(<?php echo $default; ?>); }
@@ -444,11 +459,20 @@ class wpHandoff extends wpHandoffPlugin {
             global $wp_admin_bar, $menu, $submenu, $current_screen, $wp_the_query;
 
             $admin = is_admin();
+
             $page = basename($_SERVER['REQUEST_URI']);
             $pages = $this -> get_pages();
+            $pages_show = array();
 
-            foreach($pages as $index => $p) {
-                $pages[$index] -> link = admin_url('post.php?post=' . $p -> ID . '&action=edit');
+            if(! empty($this -> options['settings_options']['pages_show'])) {
+                foreach ($this->options['settings_options']['pages_show'] as $id => $value) {
+                    foreach ($pages as $index => $p) {
+                        if ($id == $p->ID) {
+                            $p->link = admin_url('post.php?post=' . $p->ID . '&action=edit');
+                            $pages_show[] = $p;
+                        }
+                    }
+                }
             }
 
             //add links to submenu assign to respective menu
@@ -587,7 +611,14 @@ class wpHandoff extends wpHandoffPlugin {
             }
 
             $advance = $_SERVER['REQUEST_URI'];
-            $get = array_filter(explode("&", explode("?", $advance)[1]));
+            $query = explode("?", $advance);
+            $get = false;
+
+            if(! empty($query) && count($query) > 1) {
+                $query = $query[1];
+                $get = array_filter(explode("&", $query));
+            }
+
             if(empty($get)) {
                 if(substr($advance, -1) != "?") {
                     $advance .= "?";
@@ -596,11 +627,11 @@ class wpHandoff extends wpHandoffPlugin {
                 $advance .= "&";
             }
             $advance .= "hand-off-mode=advance";
+
             $this->render('admin-bar', array(
                 'pre'           => $this->pre,
                 'menu'          => $menu,
-                'pages'         =>  $pages,
-                'pages_show'    =>  $this -> options['settings_options']['pages_show'],
+                'pages'         =>  $pages_show,
                 'support'       =>  $this -> options['settings_options']['support_link'],
                 'logout'        => wp_logout_url(get_permalink()),
                 'post'          =>  $post,
@@ -781,11 +812,13 @@ class wpHandoff extends wpHandoffPlugin {
         $menu = array();
         $index = 0;
 
-        foreach($this -> options['settings_options']['menu_hidden'] as $key => $value) {    //remove non-existent hidden menus
-            list($name, $file) = explode($this -> pre, $key);
-            foreach($this -> menu as $i => $item) {
-                if($file == $item[2]) {
-                    $hidden[$key] = "on";
+        if(! empty($this -> options['settings_options']['menu_hidden'])) {
+            foreach ($this->options['settings_options']['menu_hidden'] as $key => $value) {    //remove non-existent hidden menus
+                list($name, $file) = explode($this->pre, $key);
+                foreach ($this->menu as $i => $item) {
+                    if ($file == $item[2]) {
+                        $hidden[$key] = "on";
+                    }
                 }
             }
         }
@@ -795,28 +828,25 @@ class wpHandoff extends wpHandoffPlugin {
                 $index++;
                 $item[0] = preg_replace('/\s*(\<span).*(\<\/span>)/i', '', $item[0]);   //remove notification html tags
 
-                foreach($this -> submenu as $file => $sub) {
-                    if($sub[2] == 'hand-off') {
-                        continue;
-                    }
+                foreach($this -> submenu as $file => $group) {
                     if($file == $item[2]) {
-                        foreach($sub as $key => $s) {
-                            if($s[2] == 'hand-off') {
-                                unset($sub[$key]);
+                        foreach($group as $key => $sub) {
+                            if($sub[2] == 'hand-off') {
+                                unset($group[$key]);
                                 continue;
                             }
-                            if($s[0] != '') {
-                                $sub[$key][0] = preg_replace('/\s*(\<span).*(\<\/span>)/i', '', $s[0]);   //remove notification html tags
+                            if($sub[0] != '') {
+                                $group[$key][0] = preg_replace('/\s*(\<span).*(\<\/span>)/i', '', $sub[0]);   //remove notification html tags
                             }
-                            if($file == $s[2]) {
-                                $sub[$key]['parent'] = true;
+                            if($file == $sub[2]) {
+                                $group[$key]['parent'] = true;
                             } else {
-                                $sub[$key]['parent'] = false;
+                                $group[$key]['parent'] = false;
                             }
                         }
 
-                        $this -> submenu[$file] = array_filter($sub);
-                        $item['submenu'] = $sub;
+                        $this -> submenu[$file] = array_filter($group);
+                        $item['submenu'] = $group;
                     }
                 }
 
@@ -884,10 +914,18 @@ class wpHandoff extends wpHandoffPlugin {
         $pages = get_pages();
         //end
         //login logo
-        $default_logo = home_url() . '/wp-admin/images/w-logo-blue.png';
+        $default_logo = site_url() . '/wp-admin/images/w-logo-blue.png';
+        $custom_logo = $this -> options['settings_options']['custom_logo'];
+        if(strpos($custom_logo, site_url()) === false) {   //for version 1.1.3.5 and earlier
+            $custom_logo = site_url() . $custom_logo;
+        }
         $logo = $this -> options['settings_options']['login_logo'];
         if(empty($logo)) {
             $logo = $default_logo;  //if not yet set, revert to default
+        } else {
+            if(strpos($logo, site_url()) === false) {   //for version 1.1.3.5 and earlier
+                $logo = site_url() . $logo;
+            }
         }
         //end
         //rss
@@ -900,38 +938,37 @@ class wpHandoff extends wpHandoffPlugin {
         //end
 
         $this -> render('settings', array(
-            'pre'       =>  $this -> pre,
+            'pre'               =>  $this -> pre,
             'welcome_message'   =>  $this -> options['settings_options']['welcome_message'],
-            'hidden'    =>  $hidden,
-            'orig'      =>  $orig,
-            'sub_hidden'=>  $sub_hidden,
-            'sub_orig'  =>  $sub_orig,
-            'menu'      =>  $menu,
-            'default_logo'  =>  $default_logo,
-            'custom_logo'   =>  $this -> options['settings_options']['custom_logo'],
-            'logo'      =>  $logo,
-            'default_rss'   =>  $default_rss,
-            'rss'       =>  $rss,
-            'active_tab'    =>  $this -> options['settings_options']['active_tab'],
+            'hidden'            =>  $hidden,
+            'orig'              =>  $orig,
+            'sub_hidden'        =>  $sub_hidden,
+            'sub_orig'          =>  $sub_orig,
+            'menu'              =>  $menu,
+            'default_logo'      =>  $default_logo,
+            'custom_logo'       =>  $custom_logo,
+            'logo'              =>  $logo,
+            'default_rss'       =>  $default_rss,
+            'rss'               =>  $rss,
+            'active_tab'        =>  $this -> options['settings_options']['active_tab'],
             'default_actions'   =>  $this -> default_actions,
-            'actions'   =>  $this -> options['settings_options']['row_action_hidden'],
-            'default_meta'  =>  $this -> default_meta,
-            'meta_hidden'   =>  $this -> options['settings_options']['meta_hidden'],
-            'default_columns'  =>  $this -> default_columns,
-            'columns'   =>  $this -> options['settings_options']['manage_columns_hidden'],
-            'admin_hidden'  =>  $this -> options['settings_options']['admin_hidden'],
-            'rss_title' =>  empty($rss_title) ? 'Posts Feed' : $rss_title,
-            'pages' =>  $pages,
-            'pages_show'  =>  $this -> options['settings_options']['pages_show'],
-            'pages_orig'    =>  $this -> options['settings_options']['pages_orig_names'],
-            'support'       =>  $this -> options['settings_options']['support_link'],
-            'editor'        =>  $this -> options['settings_options']['editor_hidden'],
-            'alignment'     =>  $this -> options['settings_options']['image_default_align'],
-            'link'          =>  $this -> options['settings_options']['image_default_link_type'],
-            'size'          =>  $this -> options['settings_options']['image_default_size'],
-            'roles'         =>  $wp_roles -> roles,
-            'redirect'      =>  $this -> options['settings_options']['login_redirect'],
-            'hand_off'      =>  $this -> options['settings_options']['hand_off'],
+            'actions'           =>  $this -> options['settings_options']['row_action_hidden'],
+            'default_meta'      =>  $this -> default_meta,
+            'meta_hidden'       =>  $this -> options['settings_options']['meta_hidden'],
+            'default_columns'   =>  $this -> default_columns,
+            'columns'           =>  $this -> options['settings_options']['manage_columns_hidden'],
+            'admin_hidden'      =>  $this -> options['settings_options']['admin_hidden'],
+            'rss_title'         =>  empty($rss_title) ? 'Posts Feed' : $rss_title,
+            'pages'             =>  $pages,
+            'pages_show'        =>  $this -> options['settings_options']['pages_show'],
+            'pages_orig'        =>  $this -> options['settings_options']['pages_orig_names'],
+            'support'           =>  $this -> options['settings_options']['support_link'],
+            'editor'            =>  $this -> options['settings_options']['editor_hidden'],
+            'alignment'         =>  $this -> options['settings_options']['image_default_align'],
+            'link'              =>  $this -> options['settings_options']['image_default_link_type'],
+            'size'              =>  $this -> options['settings_options']['image_default_size'],
+            'roles'             =>  $wp_roles -> roles,
+            'hand_off'          =>  $this -> options['settings_options']['hand_off'],
             ), true, 'admin');
     }
 
@@ -974,7 +1011,7 @@ class wpHandoff extends wpHandoffPlugin {
             $orig = array();
             foreach ($this -> menu as $n => $item) {
                 if (strlen($item[0]) && $item[2] == 'edit.php?post_type=page') {
-                    $this -> menu[$n][0] = 'Edit Pages';    //default Pages name for plugin
+                    $this -> menu[$n][0] = 'Edit All Pages';    //default Pages name for plugin
                 }
             }
         }
@@ -984,8 +1021,11 @@ class wpHandoff extends wpHandoffPlugin {
                 foreach ($rename as $k => $v) {
                     if ($v != '') {
                         if ($item[2] == $k) {  //match item name with original
+                            $this->menu[$n][0] = $v;
                             preg_match('/\s*(\<span).*(\<\/span>)/i', $item[0], $matches);  //exclude notification html tags
-                            $this -> menu[$n][0] = $v . $matches[0];
+                            if(isset($matches[0])) {
+                                $this -> menu[$n][0] .= $matches[0];
+                            }
                         }
                     }
                 }
@@ -998,8 +1038,11 @@ class wpHandoff extends wpHandoffPlugin {
                     if ($name != '') {
                         foreach ($group as $parent => $item) {
                             if ($item[2] == $key) {
-                                preg_match('/\s*(\<span).*(\<\/span>)/i', $this -> submenu[$n][0], $matches);  //exclude notification html tags
-                                $this -> submenu[$n][$parent][0] = $name . $matches[0];
+                                $this->submenu[$n][$parent][0] = $name;
+                                preg_match('/\s*(\<span).*(\<\/span>)/i', $item[0], $matches);  //exclude notification html tags
+                                if(isset($matches[0])) {
+                                    $this->submenu[$n][$parent][0] .= $matches[0];
+                                }
                             }
                         }
                     }
@@ -1161,6 +1204,9 @@ class wpHandoff extends wpHandoffPlugin {
 
         if(! empty($logo) && ! empty($custom) && $logo == $custom):
             $logo = str_replace(basename($logo), "wp-login/" . basename($logo), $logo);
+            if(strpos(site_url(), $logo) === false) {   //for version 1.1.3.5 and earlier
+                $logo = site_url() . $logo;
+            }
             list($width, $height) = getimagesize($logo);
         ?>
         <style type="text/css">

@@ -6,7 +6,7 @@ lexmarionbataller@yahoo.com
 
 class wpHandoffPlugin {
 
-    var $version = '';
+    var $version = false;
     var $pre = '';
     var $url = '';
     var $plugin_name = '';
@@ -14,6 +14,7 @@ class wpHandoffPlugin {
     var $debugging = true;
     var $domain = '';
 
+    var $buttons = array();
     var $classes = array();
     var $menu_pages = array();
     var $option_pages = array();
@@ -25,9 +26,6 @@ class wpHandoffPlugin {
 
     var $actions = array();
     var $filters = array();
-
-    //facebook vars
-    var $username = '';
 
     function __construct($args = false) {
         return true;
@@ -50,7 +48,7 @@ class wpHandoffPlugin {
             'admin_init'    =>  false,
             'admin_menu'    =>  false,
             'admin_head'    =>  false,
-            'init'          =>  'wp-init',
+            'init'          =>  'wp_init',
             'admin_enqueue_scripts' =>  false,
             'wp_enqueue_scripts'    =>  'enqueue_scripts',
         );
@@ -268,11 +266,11 @@ class wpHandoffPlugin {
                     if(is_array($url)) {
                         $src = empty($url['src']) ? false : $url['src'];
                         $deps = empty($url['dependency']) ? array() : $url['dependency'];
-                        $ver = $url['version'] === false ? false : $url['version'];
+                        $ver = $url['version'] === false ? $this -> version : $url['version'];
                         $in_footer = $url['footer'] === true ? true : false;
                         wp_enqueue_script($arr, $deps, $ver, $in_footer);
                     } else {
-                        wp_enqueue_script($arr, $url);
+                        wp_enqueue_script($arr, $url, array(), $this -> version);
                     }
                 }
             }
@@ -280,7 +278,14 @@ class wpHandoffPlugin {
         foreach($this -> styles as $style => $value) {
             if(is_array($value) && ! strcmp($style , 'admin')) {
                 foreach($value as $arr => $url) {
-                    wp_enqueue_style($arr, $url);
+                    if(is_array($url)) {
+                        $src = empty($url['src']) ? false : $url['src'];
+                        $deps = empty($url['dependency']) ? array() : $url['dependency'];
+                        $ver = $url['version'] === false ? $this -> false : $url['version'];
+                        wp_enqueue_style($style, $src, $deps, $this -> version);
+                    } else {
+                        wp_enqueue_style($style, $url, array(), $this -> version);
+                    }
                 }
             }
         }
@@ -291,16 +296,21 @@ class wpHandoffPlugin {
             if(is_array($url)) {
                 $src = empty($url['src']) ? false : $url['src'];
                 $deps = empty($url['dependency']) ? array() : $url['dependency'];
-                $ver = $url['version'] === false ? false : $url['version'];
+                $ver = $url['version'] === false ? $this -> version : $url['version'];
                 $in_footer = $url['footer'] === true ? true : false;
                 wp_enqueue_script($script, $deps, $ver, $in_footer);
             } else {
-                wp_enqueue_script($script, $url);
+                wp_enqueue_script($script, $url, array(), $this -> version);
             }
         }
         foreach($this -> styles as $style => $url) {
-            if(! is_array($url)) {
-                wp_enqueue_style($style, $url);
+            if(is_array($url)) {
+                $src = empty($url['src']) ? false : $url['src'];
+                $deps = empty($url['dependency']) ? array() : $url['dependency'];
+                $ver = $url['version'] === false ? $this -> false : $url['version'];
+                wp_enqueue_style($style, $src, $deps, $this -> version);
+            } else {
+                wp_enqueue_style($style, $url, array(), $this -> version);
             }
         }
 
