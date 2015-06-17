@@ -110,10 +110,12 @@
                 <hr />
             </div>
             <div class="<?php echo $pre; ?>-menu-wrap">
-                <div class="<?php echo $pre; ?>-menu-show">
-                    <h2>Shown Menu Items</h2>
-                    <p>Click on the item to rename it.</p>
+                <div>
+                    <p>Click on the item name to rename it.<br />Click and drag the <img src="<?php echo plugins_url("../../images/arrow.png", __FILE__); ?>" alt="arrow" /> icon to drag the item left or right or simply click on it to mark the item.<br />Marked item can be moved using the arrow keys.</p>
                     <p>Unchecked Sub Menus will be hidden.</p>
+                </div>
+                <div class="<?php echo $pre; ?>-menu-show">
+                    <h2>Menu Items:</h2>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
                         <?php foreach($menu as $index => $item): ?>
                             <?php if(! isset($hidden[$item[0] . $pre . $item[2]]) && $item[0] != ''): ?>
@@ -124,6 +126,7 @@
                                     <div class="<?php echo $pre; ?>-menu-name">
                                         <input type="text" class="hide" name="<?php echo $pre; ?>menu_rename[<?php echo $item[2]; ?>]" value="<?php echo strip_tags($item[0]); ?>" />
                                         <div class="<?php echo $pre; ?>-menu-html"><?php echo strip_tags($item[0]); ?></div>
+                                        <div class="<?php echo $pre; ?>-menu-drag"></div>
                                     </div>
                                     <div>
                                         <ul class="<?php echo $pre; ?>-submenu-list hide" unselectable="on">
@@ -144,8 +147,6 @@
                     </ul>
                 </div>
                 <div class="<?php echo $pre; ?>-menu-hidden">
-                    <h4>Unused Menu Items:</h4>
-                    <p>Drag items to the left column to display it to the menu.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
                         <?php foreach($hidden as $hide => $val): ?>
                             <?php
@@ -158,6 +159,7 @@
                                 <div class="<?php echo $pre; ?>-menu-name">
                                     <input type="text" class="hide" name="<?php echo $pre; ?>menu_rename[<?php echo $file; ?>]" value="<?php echo strip_tags($name); ?>" />
                                     <div class="<?php echo $pre; ?>-menu-html"><?php echo strip_tags($name); ?></div>
+                                    <div class="<?php echo $pre; ?>-menu-drag"></div>
                                 </div>
                                 <div>
                                     <?php foreach($menu as $item): ?>
@@ -189,13 +191,15 @@
                 <hr />
             </div>
             <div class="<?php echo $pre; ?>-menu-wrap">
+                <div>
+                    <p>Click and drag the <img src="<?php echo plugins_url("../../images/arrow.png", __FILE__); ?>" alt="arrow" /> icon to drag the item left or right or simply click on it to mark the item.<br />Marked item can be moved using the arrow keys.</p>
+                </div>
                 <div class="<?php echo $pre; ?>-menu-show">
                     <div>
                         <label for="<?php echo $pre; ?>-hand-off-page-header">Title:</label>
                         <input id="<?php echo $pre; ?>-hand-off-page-header" type="text" name="<?php echo $pre; ?>hand_off[page_header]" value="<?php echo $hand_off['page_header']; ?>" />
                     </div>
-                    <h2>Admin Bar Page Shortcut</h2>
-                    <p>Click on the item to rename it.</p>
+                    <h2>Page Links</h2>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
                         <?php if(! empty($pages_show)): ?>
                         <?php foreach($pages_show as $id => $val): ?>
@@ -209,12 +213,11 @@
                             }
                             ?>
                             <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
-                                <input class="hide" type="text" name="<?php echo $pre; ?>pages_orig_names[<?php echo $id; ?>]" value="<?php echo $pages_orig[$id]; ?>"/>
                                 <input class="hide" type="text" name="<?php echo $pre; ?>pages_order[]" value="<?php echo $id ?>"/>
                                 <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $id; ?>]" checked />
                                 <div class="<?php echo $pre; ?>-menu-name">
-                                    <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $id; ?>]" value="<?php echo $page -> post_title; ?>" />
                                     <div class="<?php echo $pre; ?>-menu-html"><?php echo $page -> post_title; ?></div>
+                                    <div class="<?php echo $pre; ?>-menu-drag"></div>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -222,18 +225,15 @@
                     </ul>
                 </div>
                 <div class="<?php echo $pre; ?>-menu-hidden">
-                    <h4>Pages:</h4>
-                    <p>Drag items to the left column to display it to the admin bar.</p>
                     <ul class="<?php echo $pre; ?>-menu-list" unselectable="on">
                         <?php foreach($pages as $item): ?>
                             <?php if(! isset($pages_show[$item -> ID])): ?>
                                 <li class="<?php echo $pre; ?>-menu-item" unselectable="on">
-                                    <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_orig_names[<?php echo $item -> ID ?>]" value="<?php echo ! empty($pages_orig[$item -> ID]) ? $pages_orig[$item -> ID] : ''; ?>"/>
                                     <input class="hide" type="text" hidden name="<?php echo $pre; ?>pages_order[]" value="<?php echo $item -> ID ?>"/>
                                     <input type="checkbox" class="hide" name="<?php echo $pre; ?>pages_show[<?php echo $item -> ID; ?>]" />
                                     <div class="<?php echo $pre; ?>-menu-name">
-                                        <input type="text" class="hide" name="<?php echo $pre; ?>pages_rename[<?php echo $item -> ID; ?>]" value="<?php echo $item -> post_title; ?>" />
                                         <div class="<?php echo $pre; ?>-menu-html"><?php echo $item -> post_title; ?></div>
+                                        <div class="<?php echo $pre; ?>-menu-drag"></div>
                                     </div>
                                 </li>
                             <?php endif; ?>

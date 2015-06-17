@@ -68,13 +68,19 @@
 
 .wpHandoff-menu-wrap { max-width: 800px; text-align: left; }
 .wpHandoff-menu-show,
-.wpHandoff-menu-hidden { border: 1px solid rgba(0, 0, 0, 0.6); display: inline-block; padding: 10px; vertical-align: top; width: 49%; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
+.wpHandoff-menu-hidden { border: 1px solid rgba(0, 0, 0, 0.6); display: inline-block; overflow: hidden; padding: 10px; vertical-align: top; width: 49%; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
 .wpHandoff-menu-show { border: 0; }
 .wpHandoff-menu-hidden { margin-top: 50px; }
 .wpHandoff-menu-list { margin: 0; padding: 10px 0 0 0; min-height: 70px; }
-.wpHandoff-menu-list li.wpHandoff-menu-item { border: 1px solid #000; cursor: pointer; margin: 3px; max-width: 300px; vertical-align: top; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item { border: 1px solid #000; margin: 3px; max-width: 300px; min-width: 100px; vertical-align: top; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
 .wpHandoff-menu-list li.wpHandoff-menu-item.selected { border-style: dashed; color: #fff; }
-.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name { padding: 10px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item.selected .wpHandoff-menu-name .wpHandoff-menu-drag { display: none; }
+.wpHandoff-menu-list li.wpHandoff-menu-item.active { background: #b4b9be; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name { min-height: 18px; padding: 10px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name .wpHandoff-menu-html { cursor: pointer; max-width: 261px; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name .wpHandoff-menu-drag { background: transparent url(../images/arrow.png) no-repeat; cursor: pointer; float: right; height: 18px; width: 18px; }
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name .wpHandoff-menu-html,
+.wpHandoff-menu-list li.wpHandoff-menu-item .wpHandoff-menu-name .wpHandoff-menu-drag { display: inline-block; vertical-align: top; }
 .wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffmenu_rename'],
 .wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffmenu_rename']:focus,
 .wpHandoff-submenu-list li.wpHandoff-submenu-item input[name^='wpHandoffsubmenu_rename'],
@@ -82,9 +88,10 @@
 .wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffpages_rename'],
 .wpHandoff-menu-list li.wpHandoff-menu-item input[name^='wpHandoffpages_rename']:focus { background: transparent; border: 0; font-size: 13px; margin: 0; outline: 0; padding: 0; width: 100%; box-shadow: none; -moz-box-shadow: none; -webkit-box-shadow: none; -o-box-shadow: none; }
 
-.wpHandoff-submenu-arrow { padding: 0 5px 5px 5px; text-align: center; }
+.wpHandoff-submenu-arrow { cursor: pointer; padding: 0 5px 5px 5px; text-align: center; }
 .wpHandoff-submenu-list { padding: 5px 10px; }
-.wpHandoff-submenu-list li.wpHandoff-submenu-item {  }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item { min-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wpHandoff-submenu-list li.wpHandoff-submenu-item .wpHandoff-submenu-html { cursor: pointer; }
 .wpHandoff-submenu-list li.wpHandoff-submenu-item .wpHandoff-submenu-html,
 .wpHandoff-submenu-list li.wpHandoff-submenu-item input[type='text'] { display: inline-block; vertical-align: top; }
 .wpHandoff-submenu-list li.wpHandoff-submenu-item .wpHandoff-submenu-html.hide,
@@ -105,4 +112,4 @@
 .wpHandoff-login-image-file { cursor: pointer; padding: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; filter: alpha(opacity=0); }
 
 #wpHandoff-admin-bar .hide,
-.wpHandoff-settings .hide { display: none; }
+.wpHandoff-settings .hide { display: none !important; }

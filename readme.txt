@@ -26,6 +26,8 @@ Yes.
 2. Hand Off menu settings
 
 == Changelog ==
+= 1.1.3.7 =
+* Updated Admin and Page menu system
 = 1.1.3.6 =
 * Pages defaults to Edit All Pages
 * Deleted pages stripped from pages menu

@@ -1,6 +1,5 @@
 (function($) {
-    $(document).ready(function() {
-        //ADMIN BAR
+    var admin_bar = function() {
         var adminbar = $("#wpadminbar");
         var custom_adminbar = $("#wpHandoff-admin-bar");
         var menu = $(".wpHandoff-admin-bar-menu", custom_adminbar);
@@ -9,10 +8,10 @@
         var arrow = $(".wpHandoff-admin-bar-show", custom_adminbar);
 
         custom_adminbar.css({
-           background: adminbar.css('background-color'),
+            background: adminbar.css('background-color'),
         });
         $("a", submenu).css({
-           background: adminbar.css('background-color'),
+            background: adminbar.css('background-color'),
         });
 
         arrow.on(window.interact.touchEnd, function(e) {
@@ -26,7 +25,7 @@
             if(menu.hasClass("hide")) {
                 $(window).trigger('resize');
                 menu.css({
-                   height: 0,
+                    height: 0,
                 });
                 menu.removeClass('hide');
                 menu.children().each(function() {
@@ -42,8 +41,8 @@
                     duration: "fast",
                     complete: function() {
                         $(this).css({
-                           height: 'auto',
-                           minHeight: $(this).children().eq(1).outerHeight(true),
+                            height: 'auto',
+                            minHeight: $(this).children().eq(1).outerHeight(true),
                         });
                         $(window).trigger('resize');
                     }
@@ -84,7 +83,7 @@
                     }
                 });
                 custom_adminbar.css({
-                   'z-index': 999999,
+                    'z-index': 999999,
                 });
                 custom_adminbar.animate({
                     top: 0,
@@ -127,9 +126,35 @@
             });
         }
 
-        //ADMIN BAR END
+        var curY = 0;
 
-        //SETTINGS
+        $(document).on(window.interact.touchStart, function(e) {
+            var touches = e.originalEvent;
+
+            if(e.originalEvent.touches) {
+                touches = e.originalEvent.touches[0];
+            }
+
+            curY = touches.pageY;
+        }).on(window.interact.touchMove, function(e) {
+            var touches = e.originalEvent;
+
+            if(e.originalEvent.touches) {
+                touches = e.originalEvent.touches[0];
+            }
+            curY = touches.pageY;
+        }).on(window.interact.touchEnd, function(e) {
+            if(custom_adminbar.length) {
+                var menupos = menu.offset();
+
+                if (curY > menupos.top + menu.outerHeight() + arrow.outerHeight() && !menu.hasClass('hide')) {
+                    arrow.trigger(window.interact.touchEnd);
+                }
+            }
+        });
+    };
+
+    var settings = function() {
         $(".wpHandoff-settings").each(function(index, value) {
             var wrap = $(this);
             var tabs = $(".wpHandoff-tabs", wrap)
@@ -141,8 +166,11 @@
 
             a.each(function() {
                 var that = $(this);
-                that.on(window.interact.touchEnd, function(e) {
+                that.on(window.interact.touchStart, function(e) {
+                    e.stopPropagation();
+                }).on(window.interact.touchEnd, function(e) {
                     e.preventDefault();
+                    e.stopPropagation();
                 });
                 th += that.outerHeight();
             });
@@ -209,7 +237,86 @@
                 'min-height': th - 2
             });
         });
-        //SETTINGS END
+    };
+
+    var logo = function() {
+        var image = $(".wpHandoff-login-image-file");
+        var logo_preview = $(".wpHandoff-login-image-preview img");
+        var error = $(".wpHandoff-login-image-error");
+        var progress = $(".wpHandoff-login-image-progress").children();
+        var choose = progress.eq(0);
+        var bar = progress.eq(1);
+        var custom = $("#wpHandoff-custom-logo");
+        var custom_logo = $(".wpHandoff-custom-logo");
+        var siteurl = $("#siteurl").val();
+
+        var update_preview = function(url) {
+            logo_preview.attr('src', url);
+            url = url.replace(siteurl, '');
+            custom.val(url);
+            custom_logo.val(url);
+        };
+
+        image.fileupload({
+            type: 'POST',
+            dataType: 'json',
+            dropZone: null,
+            pasteZone: null,
+            singleFileUploads: true,
+            formData: {
+                action: 'login_logo_upload',
+            },
+            start: function () {
+                bar.css({
+                    width: 0,
+                });
+                choose.addClass("hide");
+                bar.removeClass("hide");
+                error.addClass("hide");
+            },
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+                    var splits = file.name.split(".");
+                    if(splits.pop() == "bmp") {
+                        file.name = splits.join(".") + ".jpeg";
+                    }
+                    update_preview(file.url);
+                });
+
+                choose.removeClass("hide");
+                bar.addClass("hide");
+
+                custom.prop("checked", true);
+                $(window).trigger('resize');  //invoke resize to position image
+            },
+            fail: function(e, data) {
+                var msg = "";
+                for(var key in data.messages) {
+                    msg += key + " : " + data.messages[key];
+                }
+
+                error.html(msg);
+                error.removeClass("hide");
+                choose.removeClass("hide");
+                bar.addClass("hide");
+
+                if(console.log) {
+                    console.log(msg);
+                }
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+
+                bar.css({
+                    width: progress + "%",
+                });
+            }
+        }).prop('disabled', ! $.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+    };
+
+    var menu = function() {
+        var container = $(document);
+        var wrap = $("#wpHandoffmenu");
         var list = false;
         var items = false;
         var original = false;
@@ -222,7 +329,7 @@
         //event handlers prep for reset
         //reset after moving
         var items_bind = function() {
-            list = $(".wpHandoff-menu-list");   //update selectors
+            list = $(".wpHandoff-menu-list", wrap);   //update selectors
             items = false;
             list.each(function () {
                 var that = $(this);
@@ -239,42 +346,32 @@
                 items.each(function () {//renaming
                     var that = $(this);
                     var name = $(".wpHandoff-menu-name", that);
-                    var input = $("input[name^='wpHandoffmenu_rename'], input[name^='wpHandoffpages_rename']", name);
+                    var dragarrow = $(".wpHandoff-menu-drag", that);
+                    var input = $("input[name^='wpHandoffmenu_rename']", name);
                     var html = input.next();
                     var default_text = input.val();
-                    var menu_hidden = $("input[name^='wpHandoffmenu_hidden']", that);
-                    var pages_show = $("input[name^='wpHandoffpages_show']", that);
-                    var arrow = $(".wpHandoff-submenu-arrow", that);
+                    var hidden = $("input[name^='wpHandoffmenu_hidden']", that);
+                    var subarrow = $(".wpHandoff-submenu-arrow", that);
                     var submenu = $(".wpHandoff-submenu-list", that);
                     var subitem = $(".wpHandoff-submenu-item", that);
 
                     //check if the menu belongs to the hidden column
-                    //check if the page belongs to the show column
                     if (that.parents("div.wpHandoff-menu-hidden").length) {
-                        if(menu_hidden.length) {
-                            menu_hidden.prop("checked", true);
-                        }
-                        if(pages_show.length) {
-                            pages_show.prop("checked", false);
-                        }
+                        hidden.prop("checked", true);
                     } else {
-                        if(menu_hidden.length) {
-                            menu_hidden.prop("checked", false);
-                        }
-                        if(pages_show.length) {
-                            pages_show.prop("checked", true);
-                        }
+                        hidden.prop("checked", false);
                     }
 
                     //remove all events
                     input.off();
-                    name.off();
-                    arrow.off();
+                    html.off();
+                    subarrow.off();
 
                     input.on("change", function () {
                         var that = $(this);
                         var text = that.val();
 
+                        //sync input value to html text
                         if($.trim(text).length) {
                             html.html(text);
                             default_text = text;
@@ -285,17 +382,27 @@
                     }).on("blur", function() {
                         $(this).addClass("hide");
                         html.removeClass("hide");
+                        dragarrow.removeClass("hide");
                     }).on(window.interact.touchEnd, function(e) {
                         e.preventDefault();
                     }).on("focus", function() {
                         $(this).select();
+                    }).on('keyup', function(e) {
+                        e.stopPropagation();
+                        var that = $(this);
+                        if(e.which == 27) { //escape
+                            that.val(default_text);
+                            that.trigger('change');
+                            that.trigger('blur');
+                        }
                     });
 
-                    name.on(window.interact.touchEnd, function() {
-                        if(moving === false) {    //just a click
+                    //rename menu
+                    html.on(window.interact.touchEnd, function() {
+                        if(moving === false) {
                             input.removeClass("hide");
                             html.addClass("hide");
-
+                            dragarrow.addClass("hide");
                             input.focus();
                         }
                     });
@@ -328,10 +435,10 @@
                         });
 
                         that.on(window.interact.touchEnd, function() {
-                            if(moving === false) {    //just a click
-
+                            if(moving === false) {
                                 subinput.removeClass("hide");
                                 subhtml.addClass("hide");
+                                dragarrow.removeClass("hide");
 
                                 subinput.focus();
                             }
@@ -374,30 +481,39 @@
                         });
                     });
 
-                    arrow.on(window.interact.touchEnd, function() {
+                    // hide / show submenu
+                    subarrow.on(window.interact.touchEnd, function() {
                         if(moving === false) {
                             var that = $(this);
                             var arrows = that.children();
                             var more = arrows.eq(0);
                             var less = arrows.eq(1);
 
-                            if (submenu.hasClass('hide')) {
+                            if (submenu.hasClass('hide')) { //show submenu
                                 more.addClass('hide');
                                 less.removeClass('hide');
                                 submenu.removeClass('hide');
-                            } else {
+                                $(".wpHandoff-submenu-arrow", wrap).not(subarrow).each(function() {
+                                    var that = $(this);
+                                    if(that.children().eq(0).hasClass('hide')) {
+                                        that.trigger(window.interact.touchEnd);
+                                    }
+                                });
+                            } else {    //hide submenu
                                 more.removeClass('hide');
                                 less.addClass('hide');
                                 submenu.addClass('hide');
                             }
                         }
                     });
+
+                    $(window).trigger('resize');
                 });
             }
         };
         items_bind();
 
-        $(this).on(window.interact.touchStart, function(e) {
+        container.on(window.interact.touchStart, function(e) {
             var touches = e.originalEvent;
 
             if(e.originalEvent.touches) {
@@ -410,11 +526,12 @@
             if(items !== false) {
                 items.each(function () {
                     var that = $(this);
-                    var pos = that.offset();
+                    var drag = $(".wpHandoff-menu-drag", that);
+                    var pos = drag.offset();
 
                     if (
-                        (curY >= pos.top && curY <= pos.top + that.outerHeight(true))
-                        && (curX >= pos.left && curX <= pos.left + that.outerWidth(true))
+                        (curY >= pos.top && curY <= pos.top + drag.outerHeight(true))
+                        && (curX >= pos.left && curX <= pos.left + drag.outerWidth(true))
                     ) {
                         original = that;
                         original.addClass('selected');
@@ -437,8 +554,14 @@
 
                 //rebind events
                 items_bind();
+            } else {
+                if(original !== false && ! moved) {
+                    original.addClass('active');
+                    if(items !== false) {
+                        items.not(original).removeClass('active');
+                    }
+                }
             }
-
             //return default values
             copy = false;
             original = false;
@@ -448,19 +571,12 @@
             if(items !== false) {
                 items.removeClass("selected");
             }
-
-            //adminbar
-            if(custom_adminbar.length) {
-                var menupos = menu.offset();
-
-                if (curY > menupos.top + menu.outerHeight() + arrow.outerHeight() && !menu.hasClass('hide')) {
-                    arrow.trigger(window.interact.touchEnd);
-                }
-            }
         }).on(window.interact.touchMove, function(e) {
             if(copy !== false) {
-
                 original.addClass('selected');
+                if(!$(".wpHandoff-submenu-list", original).hasClass('hide')) {
+                    $(".wpHandoff-submenu-arrow", original).trigger(window.interact.touchEnd);
+                }
 
                 var touches = e.originalEvent;
 
@@ -507,10 +623,325 @@
                     });
                 }
             }
+        }).on('keyup', function(e) {
+            if(items !== false && ! moving) {
+                var index = 0;
+                var active = items.filter(function(i) {
+                    if($(this).hasClass('active')) {
+                        index = i;
+                        return true;
+                    }
+                    return false;
+                });
+                if(active.length) {
+                    items.removeClass('active');
+                    copy = active.clone(true);
+                    copy.addClass('active');
+                    switch (e.which) {
+                        case 37:    //left
+                        case 39:    //right
+                            var i = active.index();
+                            if (active.parents(".wpHandoff-menu-hidden").length) {  //left
+                                var show = $(".wpHandoff-menu-show .wpHandoff-menu-list", wrap);
+                                if(show.children().length > i) {
+                                    show.children().eq(i).before(copy);
+                                } else {
+                                    show.append(copy);
+                                }
+                            } else if (active.parents(".wpHandoff-menu-show").length) { //right
+                                var hidden = $(".wpHandoff-menu-hidden .wpHandoff-menu-list", wrap);
+                                if(hidden.children().length > i) {
+                                    hidden.children().eq(i).before(copy);
+                                } else {
+                                    hidden.append(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                        case 38:    //up
+                            if(! index) {
+                                items.eq(items.length - 1).after(copy);
+                            } else {
+                                var prev = items.eq(index - 1);
+                                if(prev.index() == prev.parent().children().length - 1) {
+                                    items.eq(index - 1).after(copy);
+                                } else {
+                                    items.eq(index - 1).before(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                        case 40:    //down
+                            if(index >= items.length - 1) {
+                                items.eq(0).before(copy);
+                            } else {
+                                var next = items.eq(index + 1);
+                                if(! next.index()) {
+                                    items.eq(index + 1).before(copy);
+                                } else {
+                                    items.eq(index + 1).after(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                    }
+                    copy = false;
+                }
+            }
         });
+    };
+
+    var pages = function() {
+        var container = $(document);
+        var wrap = $("#wpHandoffpages");
+        var list = false;
+        var items = false;
+        var original = false;
+        var copy = false;
+        var moving = false;
+        var moved = false;
+        var startX = startY = 0;
+        var curX = curY = 0;
+
+        //event handlers prep for reset
+        //reset after moving
+        var items_bind = function() {
+            list = $(".wpHandoff-menu-list", wrap);   //update selectors
+            items = false;
+            list.each(function () {
+                var that = $(this);
+                var children = that.children();
+
+                if (items === false) {
+                    items = children;
+                } else {
+                    $.merge(items, children);
+                }
+            });
+
+            if(items !== false) {
+                items.each(function () {//renaming
+                    var that = $(this);
+                    var show = $("input[name^='wpHandoffpages_show']", that);
+
+                    //check if the menu belongs to the hidden column
+                    if (that.parents("div.wpHandoff-menu-hidden").length) {
+                        show.prop("checked", false);
+                    } else {
+                        show.prop("checked", true);
+                    }
+
+                    $(window).trigger('resize');
+                });
+            }
+        };
+        items_bind();
+
+        container.on(window.interact.touchStart, function(e) {
+            var touches = e.originalEvent;
+
+            if(e.originalEvent.touches) {
+                touches = e.originalEvent.touches[0];
+            }
+
+            startX = curX = touches.pageX;
+            startY = curY = touches.pageY;
+
+            if(items !== false) {
+                items.each(function () {
+                    var that = $(this);
+                    var drag = $(".wpHandoff-menu-drag", that);
+                    var pos = drag.offset();
+
+                    if (
+                        (curY >= pos.top && curY <= pos.top + drag.outerHeight(true))
+                        && (curX >= pos.left && curX <= pos.left + drag.outerWidth(true))
+                    ) {
+                        original = that;
+                        original.addClass('selected');
+                        copy = original.clone(true);
+                        original.removeClass('selected');
+                    }
+                });
+            }
+        }).on(window.interact.touchEnd, function(e) {
+            if(moving === true) {
+                var pos = original.offset();
+
+                if (original !== false
+                    && moved
+                    && ! ((curY >= pos.top && curY <= pos.top + original.outerHeight(true))
+                    && (curX >= pos.left && curX <= pos.left + original.outerWidth(true)))
+                ) {
+                    original.remove();  //remove original element
+                }
+
+                //rebind events
+                items_bind();
+            } else {
+                if(original !== false && ! moved) {
+                    original.addClass('active');
+                    if(items !== false) {
+                        items.not(original).removeClass('active');
+                    }
+                }
+            }
+            //return default values
+            copy = false;
+            original = false;
+            moved = false;
+            moving = false;
+
+            if(items !== false) {
+                items.removeClass("selected");
+            }
+        }).on(window.interact.touchMove, function(e) {
+            if(copy !== false) {
+                original.addClass('selected');
+                if(!$(".wpHandoff-submenu-list", original).hasClass('hide')) {
+                    $(".wpHandoff-submenu-arrow", original).trigger(window.interact.touchEnd);
+                }
+
+                var touches = e.originalEvent;
+
+                moving = true;
+
+                if(e.originalEvent.touches) {
+                    touches = e.originalEvent.touches[0];
+                }
+                curX = touches.pageX;
+                curY = touches.pageY;
+
+                //in case list does not have items in it
+                list.each(function() {
+                    var that = $(this);
+                    var pos = that.offset();
+                    var children = that.children();
+
+                    if(
+                        (curY >= pos.top && curY <= pos.top + that.outerHeight(true))
+                        && (curX >= pos.left && curX <= pos.left + that.outerWidth(true))
+                        && ! children.length
+                    ) {
+                        that.append(copy);
+                        moved = true;
+                    }
+                });
+
+                if(items !== false) {
+                    items.each(function () {
+                        var that = $(this);
+                        var pos = that.offset();
+
+                        if (
+                            (curY >= pos.top && curY <= pos.top + that.outerHeight(true))
+                            && (curX >= pos.left && curX <= pos.left + that.outerWidth(true))
+                        ) {
+                            copy.remove();
+
+                            if (! that.hasClass("selected") && ! that.next().hasClass("selected")) {
+                                that.after(copy);
+                                moved = true;
+                            }
+                        }
+                    });
+                }
+            }
+        }).on('keyup', function(e) {
+            if(items !== false && ! moving) {
+                var index = 0;
+                var active = items.filter(function(i) {
+                    if($(this).hasClass('active')) {
+                        index = i;
+                        return true;
+                    }
+                    return false;
+                });
+                if(active.length) {
+                    items.removeClass('active');
+                    copy = active.clone(true);
+                    copy.addClass('active');
+                    switch (e.which) {
+                        case 37:    //left
+                        case 39:    //right
+                            var i = active.index();
+                            if (active.parents(".wpHandoff-menu-hidden").length) {  //left
+                                var show = $(".wpHandoff-menu-show .wpHandoff-menu-list", wrap);
+                                if(show.children().length > i) {
+                                    show.children().eq(i).before(copy);
+                                } else {
+                                    show.append(copy);
+                                }
+                            } else if (active.parents(".wpHandoff-menu-show").length) { //right
+                                var hidden = $(".wpHandoff-menu-hidden .wpHandoff-menu-list", wrap);
+                                if(hidden.children().length > i) {
+                                    hidden.children().eq(i).before(copy);
+                                } else {
+                                    hidden.append(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                        case 38:    //up
+                            if(! index) {
+                                items.eq(items.length - 1).after(copy);
+                            } else {
+                                var prev = items.eq(index - 1);
+                                if(prev.index() == prev.parent().children().length - 1) {
+                                    items.eq(index - 1).after(copy);
+                                } else {
+                                    items.eq(index - 1).before(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                        case 40:    //down
+                            if(index >= items.length - 1) {
+                                items.eq(0).before(copy);
+                            } else {
+                                var next = items.eq(index + 1);
+                                if(! next.index()) {
+                                    items.eq(index + 1).before(copy);
+                                } else {
+                                    items.eq(index + 1).after(copy);
+                                }
+                            }
+                            active.remove();
+                            items_bind();
+                            break;
+                    }
+                    copy = false;
+                }
+            }
+        });
+    };
+
+    $(document).ready(function() {
+        admin_bar();
+        settings();
+        logo();
+        menu();
+        pages();
 
         $("form", ".wpHandoff-settings").on("submit", function(e) {
             $(this).parent().addClass('hide');
+            list = $(".wpHandoff-menu-list", "#wpHandoffmenu");   //update selectors
+            items = false;
+            list.each(function () {
+                var that = $(this);
+                var children = that.children();
+
+                if (items === false) {
+                    items = children;
+                } else {
+                    $.merge(items, children);
+                }
+            });
             if(items !== false) {
                 var index = 0;
                 items.each(function () {
@@ -536,106 +967,11 @@
             });
         });
 
-
-        var image = $(".wpHandoff-login-image-file");
-        var logo_preview = $(".wpHandoff-login-image-preview img");
-        var error = $(".wpHandoff-login-image-error");
-        var progress = $(".wpHandoff-login-image-progress").children();
-        var choose = progress.eq(0);
-        var bar = progress.eq(1);
-        var custom = $("#wpHandoff-custom-logo");
-        var custom_logo = $(".wpHandoff-custom-logo");
-        var siteurl = $("#siteurl").val();
-
-        var update_preview = function(url) {
-            logo_preview.attr('src', url);
-            url = url.replace(siteurl, '');
-            custom.val(url);
-            custom_logo.val(url);
-        };
-
-        image.fileupload({
-            type: 'POST',
-            dataType: 'json',
-            dropZone: null,
-            pasteZone: null,
-            singleFileUploads: true,
-            formData: {
-                action: 'login_logo_upload',
-            },
-            start: function () {
-                bar.css({
-                   width: 0,
-                });
-                choose.addClass("hide");
-                bar.removeClass("hide");
-                error.addClass("hide");
-            },
-            done: function (e, data) {
-                $.each(data.result.files, function (index, file) {
-                    var splits = file.name.split(".");
-                    if(splits.pop() == "bmp") {
-                        file.name = splits.join(".") + ".jpeg";
-                    }
-                    update_preview(file.url);
-                });
-
-                choose.removeClass("hide");
-                bar.addClass("hide");
-
-                custom.prop("checked", true);
-                $(window).trigger('resize');  //invoke resize to position image
-            },
-            fail: function(e, data) {
-                var msg = "";
-                for(var key in data.messages) {
-                    msg += key + " : " + data.messages[key];
-                }
-
-                error.html(msg);
-                error.removeClass("hide");
-                choose.removeClass("hide");
-                bar.addClass("hide");
-
-                if(console.log) {
-                    console.log(msg);
-                }
-            },
-            progressall: function (e, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10);
-
-                bar.css({
-                   width: progress + "%",
-                });
-            }
-        }).prop('disabled', ! $.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
-
         $("#wpHandoff-custom-rss").next().on('change', function() {
             $(this).prev().val($(this).val());
         });
 
-        $(window).on('resize', function() {
-            var top = (logo_preview.parent().height() / 2) - (logo_preview.height() / 2);
-
-            logo_preview.css({
-                marginTop: top
-            });
-
-            //keep the admin on screen
-            custom_adminbar.css({
-               maxHeight: $(this).height() - arrow.height(),
-            });
-
-            if(! menu.hasClass('hide')) {
-                custom_adminbar.css({
-                    top: adminbar.outerHeight(true),
-                });
-                menu.children().eq(0).css({
-                   maxWidth: menu.outerWidth(true) - menu.children().eq(1).outerWidth(true) - 10
-                });
-            }
-
-        }).trigger('resize');
+        $(window).trigger('resize');
     });
 
     $(window).on('load mobileinit', function() {
@@ -662,5 +998,53 @@
         });
 
         $(this).trigger('resize');  //for logo resize event
+    }).on('resize', function() {
+        var logo_preview = $(".wpHandoff-login-image-preview img");
+        var adminbar = $("#wpadminbar");
+        var custom_adminbar = $("#wpHandoff-admin-bar");
+        var menu = $(".wpHandoff-admin-bar-menu", custom_adminbar);
+        var arrow = $(".wpHandoff-admin-bar-show", custom_adminbar);
+        var top = (logo_preview.parent().height() / 2) - (logo_preview.height() / 2);
+
+        logo_preview.css({
+            marginTop: top
+        });
+
+        //keep the admin on screen
+        custom_adminbar.css({
+            maxHeight: $(this).height() - arrow.height(),
+        });
+
+        if(! menu.hasClass('hide')) {
+            custom_adminbar.css({
+                top: adminbar.outerHeight(true),
+            });
+            menu.children().eq(0).css({
+                maxWidth: menu.outerWidth(true) - menu.children().eq(1).outerWidth(true) - 10
+            });
+        }
+        $(".wpHandoff-menu-list").each(function() {
+            var that = $(this);
+            var max = $(window).height() * 0.8;
+            var h = 0;
+
+            that.children().each(function() {
+                h += $(this).outerHeight(true);
+            });
+
+            that.css({
+               maxHeight: max,
+            });
+
+            if(h > max) {
+                that.children().css({
+                    display: 'inline-block',
+                });
+            } else {
+                that.children().css({
+                    display: 'block',
+                });
+            }
+        });
     });
 })(jQuery);
