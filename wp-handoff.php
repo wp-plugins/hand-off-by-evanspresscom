@@ -21,7 +21,7 @@ class wpHandoff extends wpHandoffPlugin {
 
     function __construct($args = false) {
         $this -> name = plugin_basename(__FILE__);
-        $this -> version = '1.1.3.6';
+        $this -> version = '1.1.3.7';
 
         $this -> scripts = array(
             'admin' =>  array('jquery'   =>  false,
